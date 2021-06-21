@@ -1,5 +1,6 @@
 package com.soulesidibe.todoapp.ui.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,9 +33,11 @@ fun TodosScreen(navController: NavHostController) {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = { navController.navigate(Screen.Create.route) {
+                FloatingActionButton(onClick = {
+                    navController.navigate(Screen.Create.route) {
 
-                } }) {
+                    }
+                }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "add a todo")
                 }
             }
@@ -45,7 +48,10 @@ fun TodosScreen(navController: NavHostController) {
                     Todo(title = "Test 2"),
                     Todo(title = "Test 3"),
                     Todo(title = "Test 4"),
-                )
+                ),
+                onItemClick = {
+                    navController.navigate(Screen.Create.route)
+                }
             )
 
         }
@@ -53,36 +59,45 @@ fun TodosScreen(navController: NavHostController) {
 }
 
 @Composable
-fun TodoList(todos: List<Todo>, modifier: Modifier = Modifier) {
+fun TodoList(todos: List<Todo>, modifier: Modifier = Modifier, onItemClick: (Todo) -> Unit = {}) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        items(items = todos, key = {it.id}) { todo: Todo ->
-            TodoItem(todo)
+        items(items = todos, key = { it.id }) { todo: Todo ->
+            TodoItem(todo) {
+                onItemClick(todo)
+            }
         }
     }
 }
 
 @Composable
-fun TodoItem(todo: Todo) {
+fun TodoItem(todo: Todo, onClick: () -> Unit = {}) {
     val constraintSet = ConstraintSet {
         val titleRef = createRefFor("title")
 
-        constrain(titleRef){
+        constrain(titleRef) {
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
     }
-    ConstraintLayout(constraintSet, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-        Text(todo.title, modifier = Modifier
+    ConstraintLayout(
+        constraintSet,
+        modifier = Modifier
             .fillMaxWidth()
-            .layoutId("title"), style = Typography.body1)
+            .height(48.dp)
+            .clickable { onClick() }
+            .padding(PaddingValues(horizontal = 16.dp, vertical = 8.dp))) {
+        Text(
+            todo.title, modifier = Modifier
+                .fillMaxWidth()
+                .layoutId("title"), style = Typography.body1
+        )
     }
 }
 

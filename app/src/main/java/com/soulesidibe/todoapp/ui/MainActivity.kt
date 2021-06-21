@@ -17,7 +17,7 @@ import com.soulesidibe.todoapp.ui.theme.TodoAppTheme
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel: TodoViewModel by viewModels()
+    private val viewModel: TodoViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

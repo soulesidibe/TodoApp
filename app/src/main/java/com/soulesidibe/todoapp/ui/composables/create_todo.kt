@@ -8,6 +8,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -28,16 +32,19 @@ fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
                     title = {
                         Text(text = "Add a todo")
                     },
-                    navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(imageVector = Icons.Default.ArrowBack, "Go back")
-                        }
-                    },
                     actions = {
                         todo?.let {
                             IconButton(onClick = { /*TODO*/ }) {
                                 Icon(imageVector = Icons.Default.Delete, "Description")
                             }
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Go back"
+                            )
                         }
                     }
                 )
@@ -51,13 +58,15 @@ fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
             ) {
                 Text(text = "Veuillez fournir un titre a votre todo.")
                 Spacer(modifier = Modifier.height(8.dp))
+                var textFieldValue by remember { mutableStateOf(todo?.title ?: "") }
+
                 TextField(
-                    value = todo?.title ?: "",
+                    value = textFieldValue,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    onValueChange = { _ ->
-
+                    onValueChange = { value ->
+                        textFieldValue = value
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -89,5 +98,5 @@ fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun PreviewCreateTodoScreen() {
-    CreateTodoScreen(navController = rememberNavController(), todo = Todo(title = "Hello from KM City"))
+    CreateTodoScreen(navController = rememberNavController())
 }

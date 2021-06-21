@@ -8,21 +8,26 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.ui.Screen
 import com.soulesidibe.todoapp.ui.theme.Typography
 import com.soulesidibe.todocompose.data.Todo
 
 @Composable
-fun TodosScreen(navController: NavHostController) {
+fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostController) {
+
+    val todosState by todosLiveData.observeAsState()
+
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
             topBar = {
@@ -34,23 +39,16 @@ fun TodosScreen(navController: NavHostController) {
             },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-                    navController.navigate(Screen.Create.route) {
-
-                    }
+                    navController.navigate(Screen.Create.route)
                 }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "add a todo")
                 }
             }
         ) {
             TodoList(
-                todos = listOf(
-                    Todo(title = "Test 1"),
-                    Todo(title = "Test 2"),
-                    Todo(title = "Test 3"),
-                    Todo(title = "Test 4"),
-                ),
-                onItemClick = {
-                    navController.navigate(Screen.Create.route)
+                todos = todosState,
+                onClick = { todo ->
+                    navController.navigate(Screen.Create.createRoute(todo.id))
                 }
             )
 
@@ -59,23 +57,21 @@ fun TodosScreen(navController: NavHostController) {
 }
 
 @Composable
-fun TodoList(todos: List<Todo>, modifier: Modifier = Modifier, onItemClick: (Todo) -> Unit = {}) {
+fun TodoList(onClick: (Todo) -> Unit, todos: List<Todo>?, modifier: Modifier = Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        items(items = todos, key = { it.id }) { todo: Todo ->
-            TodoItem(todo) {
-                onItemClick(todo)
-            }
+        items(items = todos!!, key = { it.id }) { todo: Todo ->
+            TodoItem(todo = todo, onItemClick = { onClick(todo) })
         }
     }
 }
 
 @Composable
-fun TodoItem(todo: Todo, onClick: () -> Unit = {}) {
+fun TodoItem(onItemClick: () -> Unit, todo: Todo) {
     val constraintSet = ConstraintSet {
         val titleRef = createRefFor("title")
 
@@ -86,13 +82,13 @@ fun TodoItem(todo: Todo, onClick: () -> Unit = {}) {
             end.linkTo(parent.end)
         }
     }
-    ConstraintLayout(
-        constraintSet,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clickable { onClick() }
-            .padding(PaddingValues(horizontal = 16.dp, vertical = 8.dp))) {
+    ConstraintLayout(constraintSet, modifier = Modifier
+        .fillMaxWidth()
+        .height(48.dp)
+        .clickable { onItemClick() }
+        .padding(PaddingValues(horizontal = 16.dp, vertical = 8.dp))
+    ) {
+
         Text(
             todo.title, modifier = Modifier
                 .fillMaxWidth()
@@ -104,19 +100,21 @@ fun TodoItem(todo: Todo, onClick: () -> Unit = {}) {
 @Preview(heightDp = 100, name = "Todo item", widthDp = 411, showBackground = true)
 @Composable
 fun PreviewTodoItem() {
-    TodoItem(todo = Todo(title = "This is a test todo"))
+    TodoItem(todo = Todo(title = "This is a test todo"), onItemClick = {})
 }
 
 @Preview(device = Devices.PIXEL_4, showSystemUi = true, name = "The todo list")
 @Composable
 fun PreviewTodoList() {
     TodoList(
-        listOf(
+        todos = listOf(
             Todo(title = "Test 1"),
             Todo(title = "Test 2"),
             Todo(title = "Test 3"),
             Todo(title = "Test 4"),
-        )
+        ),
+        onClick = { }
+
     )
 
 }

@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
             TodoAppTheme {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = Screen.Todos.route) {
-                    val modifier = Modifier.padding(PaddingValues(all = 8.dp))
                     composable(Screen.Todos.route) {
                         // A surface container using the 'background' color from the theme
                         TodosScreen(navController = navController)

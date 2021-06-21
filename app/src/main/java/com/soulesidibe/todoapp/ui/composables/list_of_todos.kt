@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,9 @@ fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostContr
     val todosState by todosLiveData.observeAsState()
 
     Surface(color = MaterialTheme.colors.background) {
+        val createTodo = {
+            navController.navigate(Screen.Create.route)
+        }
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -45,9 +51,7 @@ fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostContr
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    navController.navigate(Screen.Create.route)
-                }) {
+                FloatingActionButton(onClick = createTodo) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "add a todo")
                 }
             }
@@ -56,7 +60,8 @@ fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostContr
                 todos = todosState,
                 onClick = { todo ->
                     navController.navigate(Screen.Create.createRoute(todo.id))
-                }
+                },
+                onAdd = createTodo
             )
 
         }
@@ -64,10 +69,15 @@ fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostContr
 }
 
 @Composable
-fun TodoList(onClick: (Todo) -> Unit, todos: List<Todo>?, modifier: Modifier = Modifier) {
+fun TodoList(
+    onClick: (Todo) -> Unit,
+    onAdd: () -> Unit,
+    todos: List<Todo>?,
+    modifier: Modifier = Modifier
+) {
     if (todos == null || todos.isEmpty()) {
         //Show Empty view
-        TodosEmptyView()
+        TodosEmptyView { onAdd() }
     } else {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -83,15 +93,34 @@ fun TodoList(onClick: (Todo) -> Unit, todos: List<Todo>?, modifier: Modifier = M
 }
 
 @Composable
-fun TodosEmptyView() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(), contentAlignment = Alignment.Center) {
+fun TodosEmptyView(onAdd: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(), contentAlignment = Alignment.Center
+    ) {
 
         Column {
-            Icon(modifier = Modifier.align(CenterHorizontally), painter = painterResource(id = R.drawable.ic_to_do_list), tint = Color.Gray, contentDescription = "Empty todo list" )
+            Icon(
+                modifier = Modifier.align(CenterHorizontally),
+                painter = painterResource(id = R.drawable.ic_to_do_list),
+                tint = Color.Gray,
+                contentDescription = "Empty todo list"
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Vous n'avez pas encore de todo :(", color = Color.Gray)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Ajouter un nouveau todo",
+                color = Color.Gray,
+                modifier = Modifier
+                    .clickable { onAdd() }
+                    .padding(8.dp)
+                    .align(CenterHorizontally),
+                style = TextStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+            )
+
         }
 
     }
@@ -137,8 +166,8 @@ fun PreviewTodoList() {
         todos = listOf(
 
         ),
-        onClick = { }
-
+        onClick = { },
+        onAdd = {}
     )
 
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,11 @@ fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
                 TopAppBar(
                     title = {
                         Text(text = "Add a todo")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(imageVector = Icons.Default.ArrowBack, "Go back")
+                        }
                     },
                     actions = {
                         todo?.let {

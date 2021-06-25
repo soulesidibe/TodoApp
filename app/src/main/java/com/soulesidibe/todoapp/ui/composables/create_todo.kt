@@ -19,12 +19,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.soulesidibe.todoapp.ui.TodoViewModel
 import com.soulesidibe.todocompose.data.Todo
 
 @Composable
-fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
+fun CreateTodoScreen(viewModel: TodoViewModel, navController: NavHostController, todo: Todo? = null) {
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
             topBar = {
@@ -79,6 +81,8 @@ fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(modifier = Modifier.align(Alignment.End), onClick = {
+                    viewModel.add(Todo(title = textFieldValue))
+                    textFieldValue = ""
                     navController.popBackStack()
                 }) {
                     val label = if (todo != null) {
@@ -98,5 +102,5 @@ fun CreateTodoScreen(todo: Todo? = null, navController: NavHostController) {
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun PreviewCreateTodoScreen() {
-    CreateTodoScreen(navController = rememberNavController())
+    CreateTodoScreen(viewModel = viewModel(), navController = rememberNavController())
 }

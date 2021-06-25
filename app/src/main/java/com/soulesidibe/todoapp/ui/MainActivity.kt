@@ -9,8 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import com.soulesidibe.todoapp.ui.TodoViewModel
-import com.soulesidibe.todoapp.ui.Screen
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.soulesidibe.todoapp.ui.composables.CreateTodoScreen
 import com.soulesidibe.todoapp.ui.composables.TodosScreen
 import com.soulesidibe.todoapp.ui.theme.TodoAppTheme
@@ -36,6 +35,7 @@ class MainActivity : ComponentActivity() {
                             navArgument("id") { type = NavType.StringType })
                     ) {
                         CreateTodoScreen(
+                            viewModel = viewModel,
                             navController = navController,
                             todo = viewModel.get(it.arguments?.getString("id"))
                         )

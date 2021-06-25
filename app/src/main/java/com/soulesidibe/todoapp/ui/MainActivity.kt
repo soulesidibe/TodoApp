@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.SideEffect
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,7 +23,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TodoAppTheme {
+            val systemUiController = rememberSystemUiController()
+            val color = MaterialTheme.colors.primary
+
+            SideEffect {
+                systemUiController.setStatusBarColor(
+                    color = color
+                )
+            }
+
+            TodoAppTheme() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = Screen.Todos.route) {
 

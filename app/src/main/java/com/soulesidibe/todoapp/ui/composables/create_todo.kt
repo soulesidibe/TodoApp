@@ -26,7 +26,11 @@ import com.soulesidibe.todoapp.ui.TodoViewModel
 import com.soulesidibe.todocompose.data.Todo
 
 @Composable
-fun CreateTodoScreen(viewModel: TodoViewModel, navController: NavHostController, todo: Todo? = null) {
+fun CreateTodoScreen(
+    viewModel: TodoViewModel,
+    navController: NavHostController,
+    todo: Todo? = null
+) {
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(
             topBar = {
@@ -36,7 +40,10 @@ fun CreateTodoScreen(viewModel: TodoViewModel, navController: NavHostController,
                     },
                     actions = {
                         todo?.let {
-                            IconButton(onClick = { /*TODO*/ }) {
+                            IconButton(onClick = {
+                                viewModel.remove(it.id)
+                                navController.popBackStack()
+                            }) {
                                 Icon(imageVector = Icons.Default.Delete, "Description")
                             }
                         }
@@ -62,6 +69,13 @@ fun CreateTodoScreen(viewModel: TodoViewModel, navController: NavHostController,
                 Spacer(modifier = Modifier.height(8.dp))
                 var textFieldValue by remember { mutableStateOf(todo?.title ?: "") }
 
+                val onClick: () -> Unit = {
+                    viewModel.add(Todo(title = textFieldValue))
+                    textFieldValue = ""
+                    navController.popBackStack()
+                }
+
+
                 TextField(
                     value = textFieldValue,
                     modifier = Modifier
@@ -75,16 +89,10 @@ fun CreateTodoScreen(viewModel: TodoViewModel, navController: NavHostController,
                         autoCorrect = false,
                         imeAction = ImeAction.Done
                     ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        navController.popBackStack()
-                    })
+                    keyboardActions = KeyboardActions(onDone = { onClick() })
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(modifier = Modifier.align(Alignment.End), onClick = {
-                    viewModel.add(Todo(title = textFieldValue))
-                    textFieldValue = ""
-                    navController.popBackStack()
-                }) {
+                Button(modifier = Modifier.align(Alignment.End), onClick = onClick) {
                     val label = if (todo != null) {
                         "Modifier"
                     } else {

@@ -23,6 +23,12 @@ class TodoViewModel : ViewModel() {
         _todos.postValue(todos)
     }
 
+    fun remove(id: String) {
+        todos.removeAll {
+            it.id == id
+        }
+    }
+
     private val _todos: MutableLiveData<List<Todo>> = MutableLiveData(todos)
     val todosLiveData = _todos
 }

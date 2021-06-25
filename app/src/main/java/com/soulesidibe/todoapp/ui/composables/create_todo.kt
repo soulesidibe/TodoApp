@@ -81,6 +81,8 @@ fun CreateTodoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
+                    maxLines = 1,
+                    singleLine = true,
                     onValueChange = { value ->
                         textFieldValue = value
                     },

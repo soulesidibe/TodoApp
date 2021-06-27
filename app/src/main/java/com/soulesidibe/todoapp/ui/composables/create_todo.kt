@@ -70,7 +70,9 @@ fun CreateTodoScreen(
                 var textFieldValue by remember { mutableStateOf(todo?.title ?: "") }
 
                 val onClick: () -> Unit = {
-                    viewModel.add(Todo(title = textFieldValue))
+                    viewModel.add(
+                        todo?.copy(title = textFieldValue) ?: Todo(title = textFieldValue)
+                    )
                     textFieldValue = ""
                     navController.popBackStack()
                 }

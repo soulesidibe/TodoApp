@@ -19,7 +19,18 @@ class TodoViewModel : ViewModel() {
     }
 
     fun add(todo: Todo) {
-        todos.add(todo)
+        var exist = false
+        val newList = todos.map { _todo ->
+            if (_todo.id == todo.id) {
+                exist = true
+                todo
+            } else _todo
+        }
+        todos.clear()
+        todos.addAll(newList)
+        if (!exist) {
+            todos.add(todo)
+        }
         _todos.postValue(todos)
     }
 

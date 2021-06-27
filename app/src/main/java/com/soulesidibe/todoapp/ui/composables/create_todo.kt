@@ -32,82 +32,120 @@ fun CreateTodoScreen(
     todo: Todo? = null
 ) {
     Surface(color = MaterialTheme.colors.background) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = "Add a todo")
-                    },
-                    actions = {
-                        todo?.let {
-                            IconButton(onClick = {
-                                viewModel.remove(it.id)
-                                navController.popBackStack()
-                            }) {
-                                Icon(imageVector = Icons.Default.Delete, "Description")
-                            }
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Go back"
-                            )
-                        }
-                    }
+        Scaffold(topBar = { CreateTodoAppBar(todo, viewModel, navController) }) {
+            CreateTodo(todo, viewModel, navController)
+        }
+    }
+}
+
+@Composable
+private fun CreateTodoAppBar(
+    todo: Todo?,
+    viewModel: TodoViewModel,
+    navController: NavHostController
+) {
+    TopAppBar(
+        title = {
+            Text(text = "Add a todo")
+        },
+        actions = {
+            CreateTodoToolbarActions(todo, viewModel, navController)
+        },
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Go back"
                 )
-            }
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-            ) {
-                Text(text = "Veuillez fournir un titre a votre todo.")
-                Spacer(modifier = Modifier.height(8.dp))
-                var textFieldValue by remember { mutableStateOf(todo?.title ?: "") }
-
-                val onClick: () -> Unit = {
-                    viewModel.add(
-                        todo?.copy(title = textFieldValue) ?: Todo(title = textFieldValue)
-                    )
-                    textFieldValue = ""
-                    navController.popBackStack()
-                }
-
-
-                TextField(
-                    value = textFieldValue,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    maxLines = 1,
-                    singleLine = true,
-                    onValueChange = { value ->
-                        textFieldValue = value
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        autoCorrect = false,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = { onClick() })
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(modifier = Modifier.align(Alignment.End), onClick = onClick) {
-                    val label = if (todo != null) {
-                        "Modifier"
-                    } else {
-                        "Ajouter"
-                    }
-                    Text(text = label)
-                }
-
-
             }
         }
+    )
+}
+
+@Composable
+private fun CreateTodoToolbarActions(
+    todo: Todo?,
+    viewModel: TodoViewModel,
+    navController: NavHostController
+) {
+    todo?.let {
+        IconButton(onClick = {
+            viewModel.remove(it.id)
+            navController.popBackStack()
+        }) {
+            Icon(imageVector = Icons.Default.Delete, "Description")
+        }
+    }
+}
+
+@Composable
+private fun CreateTodo(
+    todo: Todo?,
+    viewModel: TodoViewModel,
+    navController: NavHostController
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxHeight()
+            .fillMaxWidth()
+    ) {
+        Text(text = "Veuillez fournir un titre a votre todo.")
+        Spacer(modifier = Modifier.height(8.dp))
+        var textFieldValue by remember { mutableStateOf(todo?.title ?: "") }
+
+        val onClick: () -> Unit = {
+            viewModel.add(
+                todo?.copy(title = textFieldValue) ?: Todo(title = textFieldValue)
+            )
+            textFieldValue = ""
+            navController.popBackStack()
+        }
+
+
+        CreateTodoTitleInput(textFieldValue, onClick)
+        Spacer(modifier = Modifier.height(8.dp))
+        CreateTodoSubmitButton(onClick, modifier = Modifier.align(Alignment.End), todo)
+
+
+    }
+}
+
+@Composable
+private fun CreateTodoTitleInput(value: String, onClick: () -> Unit) {
+    var textFieldValue = value
+    TextField(
+        value = textFieldValue,
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        maxLines = 1,
+        singleLine = true,
+        onValueChange = {
+            textFieldValue = it
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            autoCorrect = false,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = { onClick() })
+    )
+}
+
+@Composable
+private fun CreateTodoSubmitButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    todo: Todo?
+) {
+    Button(modifier = modifier, onClick = onClick) {
+        val label = if (todo != null) {
+            "Modifier"
+        } else {
+            "Ajouter"
+        }
+        Text(text = label)
     }
 }
 

@@ -15,7 +15,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -113,13 +115,14 @@ private fun CreateTodo(
 
 @Composable
 private fun CreateTodoTitleInput(value: String, onClick: () -> Unit) {
-    var textFieldValue = value
-    TextField(
+    var textFieldValue by remember { mutableStateOf(value) }
+    OutlinedTextField(
         value = textFieldValue,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         maxLines = 1,
+        label = { Text(text = "Title") },
         singleLine = true,
         onValueChange = {
             textFieldValue = it
@@ -147,10 +150,4 @@ private fun CreateTodoSubmitButton(
         }
         Text(text = label)
     }
-}
-
-@Preview(device = Devices.PIXEL_4)
-@Composable
-fun PreviewCreateTodoScreen() {
-    CreateTodoScreen(viewModel = viewModel(), navController = rememberNavController())
 }

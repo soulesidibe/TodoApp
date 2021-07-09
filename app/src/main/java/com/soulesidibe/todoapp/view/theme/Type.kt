@@ -1,4 +1,4 @@
-package com.soulesidibe.todoapp.ui.theme
+package com.soulesidibe.todoapp.view.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

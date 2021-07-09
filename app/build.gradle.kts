@@ -50,6 +50,17 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    val koin_version = "3.1.2"
+
+    // Koin core features
+    implementation("io.insert-koin:koin-core:$koin_version")
+    // Koin test features
+    testImplementation("io.insert-koin:koin-test:$koin_version")
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation("io.insert-koin:koin-android:$koin_version")
+
     implementation("androidx.core:core-ktx:1.5.0")
     implementation("androidx.appcompat:appcompat:1.3.0")
     implementation("com.google.android.material:material:1.3.0")
@@ -65,6 +76,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.12.0")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.3.0-beta02")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")

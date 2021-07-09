@@ -1,6 +1,5 @@
-package com.soulesidibe.todoapp.ui.composables
+package com.soulesidibe.todoapp.view.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,13 +8,11 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -29,18 +26,21 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.R
-import com.soulesidibe.todoapp.ui.Screen
-import com.soulesidibe.todoapp.ui.theme.Typography
-import com.soulesidibe.todocompose.data.Todo
+import com.soulesidibe.todoapp.model.TodoViewModel
+import com.soulesidibe.todoapp.view.Screen
+import com.soulesidibe.todoapp.view.theme.Typography
 
 @Composable
-fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostController) {
+fun TodosScreen(
+    data: LiveData<List<TodoViewModel>>,
+    navController: NavHostController
+) {
 
-    val todosState by todosLiveData.observeAsState()
+    val todosState = data.observeAsState()
 
     Surface(color = MaterialTheme.colors.background) {
         val createTodo = {
-            navController.navigate(Screen.Create.route)
+            navController.navigate(Screen.CreateTodoScreen.route)
         }
         Scaffold(
             topBar = {
@@ -56,13 +56,20 @@ fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostContr
                 }
             }
         ) {
-            TodoList(
-                todos = todosState,
-                onClick = { todo ->
-                    navController.navigate(Screen.Create.createRoute(todo.id))
-                },
-                onAdd = createTodo
-            )
+            val value = todosState.value
+            if (value == null || value.isEmpty()) {
+                //Show Empty view
+                TodosEmptyView { createTodo() }
+            } else {
+
+                TodoList(
+                    onClick = { todo ->
+                        navController.navigate(Screen.CreateTodoScreen.createRoute(todo.id))
+                    },
+                    todos = value
+                )
+            }
+
 
         }
     }
@@ -70,24 +77,19 @@ fun TodosScreen(todosLiveData: LiveData<List<Todo>>, navController: NavHostContr
 
 @Composable
 fun TodoList(
-    onClick: (Todo) -> Unit,
-    onAdd: () -> Unit,
-    todos: List<Todo>?,
+    onClick: (TodoViewModel) -> Unit,
+    todos: List<TodoViewModel>,
     modifier: Modifier = Modifier
 ) {
-    if (todos == null || todos.isEmpty()) {
-        //Show Empty view
-        TodosEmptyView { onAdd() }
-    } else {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            items(items = todos, key = { it.id }) { todo: Todo ->
-                TodoItem(todo = todo, onItemClick = { onClick(todo) })
-            }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
+        items(items = todos, key = { it.id }) { todo: TodoViewModel ->
+            TodoItem(todoViewModel = todo, onItemClick = { onClick(todo) })
         }
     }
 }
@@ -127,7 +129,7 @@ fun TodosEmptyView(onAdd: () -> Unit) {
 }
 
 @Composable
-fun TodoItem(onItemClick: () -> Unit, todo: Todo) {
+fun TodoItem(onItemClick: () -> Unit, todoViewModel: TodoViewModel) {
     val constraintSet = ConstraintSet {
         val titleRef = createRefFor("title")
 
@@ -146,7 +148,7 @@ fun TodoItem(onItemClick: () -> Unit, todo: Todo) {
     ) {
 
         Text(
-            todo.title, modifier = Modifier
+            todoViewModel.title, modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("title"), style = Typography.body1
         )
@@ -156,18 +158,15 @@ fun TodoItem(onItemClick: () -> Unit, todo: Todo) {
 @Preview(heightDp = 100, name = "Todo item", widthDp = 411, showBackground = true)
 @Composable
 fun PreviewTodoItem() {
-    TodoItem(todo = Todo(title = "This is a test todo"), onItemClick = {})
+    TodoItem(todoViewModel = TodoViewModel(title = "This is a test todo"), onItemClick = {})
 }
 
 @Preview(device = Devices.PIXEL_4, showSystemUi = true, name = "The todo list")
 @Composable
 fun PreviewTodoList() {
     TodoList(
-        todos = listOf(
-
-        ),
         onClick = { },
-        onAdd = {}
+        todos = listOf()
     )
 
 }

@@ -1,4 +1,4 @@
-package com.soulesidibe.todoapp.ui.composables
+package com.soulesidibe.todoapp.view.composables
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -11,39 +11,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.soulesidibe.todoapp.ui.TodoViewModel
-import com.soulesidibe.todocompose.data.Todo
+import com.soulesidibe.todoapp.model.TodoViewModel
+import com.soulesidibe.todoapp.viewmodel.TodoDetailViewModel
 
 @Composable
 fun CreateTodoScreen(
-    viewModel: TodoViewModel,
+    viewModel: TodoDetailViewModel,
     navController: NavHostController,
-    todo: Todo? = null
+    todoViewModel: TodoViewModel? = null
 ) {
     Surface(color = MaterialTheme.colors.background) {
-        Scaffold(topBar = { CreateTodoAppBar(todo, viewModel, navController) }) {
-            CreateTodo(todo, viewModel, navController)
+        Scaffold(topBar = { CreateTodoAppBar(todoViewModel, viewModel, navController) }) {
+            CreateTodo(todoViewModel, viewModel, navController)
         }
     }
 }
 
 @Composable
 private fun CreateTodoAppBar(
-    todo: Todo?,
-    viewModel: TodoViewModel,
+    todoViewModel: TodoViewModel?,
+    viewModel: TodoDetailViewModel,
     navController: NavHostController
 ) {
     TopAppBar(
@@ -51,7 +46,7 @@ private fun CreateTodoAppBar(
             Text(text = "Add a todo")
         },
         actions = {
-            CreateTodoToolbarActions(todo, viewModel, navController)
+            CreateTodoToolbarActions(todoViewModel, viewModel)
         },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
@@ -66,14 +61,13 @@ private fun CreateTodoAppBar(
 
 @Composable
 private fun CreateTodoToolbarActions(
-    todo: Todo?,
-    viewModel: TodoViewModel,
-    navController: NavHostController
+    todoViewModel: TodoViewModel?,
+    viewModel: TodoDetailViewModel
 ) {
-    todo?.let {
+
+    todoViewModel?.let {
         IconButton(onClick = {
             viewModel.remove(it.id)
-            navController.popBackStack()
         }) {
             Icon(imageVector = Icons.Default.Delete, "Description")
         }
@@ -82,10 +76,35 @@ private fun CreateTodoToolbarActions(
 
 @Composable
 private fun CreateTodo(
-    todo: Todo?,
-    viewModel: TodoViewModel,
+    todoViewModel: TodoViewModel?,
+    viewModel: TodoDetailViewModel,
     navController: NavHostController
 ) {
+
+    var textFieldValue by remember { mutableStateOf(todoViewModel?.title ?: "") }
+    val addOrUpdateState by viewModel.addOrUpdateLiveData.observeAsState()
+
+    val removeState by viewModel.removeLiveData.observeAsState()
+
+    removeState?.let {
+        if (it.isSuccess) {
+            navController.popBackStack()
+        } else {
+            TODO()
+        }
+        return
+    }
+
+    addOrUpdateState?.let {
+        if (it.isSuccess && it.getOrNull() == true) {
+            textFieldValue = ""
+            navController.popBackStack()
+        } else {
+            TODO()
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -94,30 +113,30 @@ private fun CreateTodo(
     ) {
         Text(text = "Veuillez fournir un titre a votre todo.")
         Spacer(modifier = Modifier.height(8.dp))
-        var textFieldValue by remember { mutableStateOf(todo?.title ?: "") }
 
         val onClick: () -> Unit = {
-            viewModel.add(
-                todo?.copy(title = textFieldValue) ?: Todo(title = textFieldValue)
+            viewModel.addOrUpdate(
+                todoViewModel?.copy(title = textFieldValue) ?: TodoViewModel(title = textFieldValue)
             )
-            textFieldValue = ""
-            navController.popBackStack()
         }
 
-
-        CreateTodoTitleInput(textFieldValue, onClick)
+        CreateTodoTitleInput(textFieldValue, { textFieldValue = it }, onClick)
         Spacer(modifier = Modifier.height(8.dp))
-        CreateTodoSubmitButton(onClick, modifier = Modifier.align(Alignment.End), todo)
+        CreateTodoSubmitButton(onClick, modifier = Modifier.align(Alignment.End), todoViewModel)
 
 
     }
 }
 
 @Composable
-private fun CreateTodoTitleInput(value: String, onClick: () -> Unit) {
-    var textFieldValue by remember { mutableStateOf(value) }
+private fun CreateTodoTitleInput(
+    value: String,
+    onTextChange: (String) -> Unit,
+    onClick: () -> Unit
+) {
+
     OutlinedTextField(
-        value = textFieldValue,
+        value = value,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -125,7 +144,7 @@ private fun CreateTodoTitleInput(value: String, onClick: () -> Unit) {
         label = { Text(text = "Title") },
         singleLine = true,
         onValueChange = {
-            textFieldValue = it
+            onTextChange(it)
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -140,10 +159,10 @@ private fun CreateTodoTitleInput(value: String, onClick: () -> Unit) {
 private fun CreateTodoSubmitButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    todo: Todo?
+    todoViewModel: TodoViewModel?
 ) {
     Button(modifier = modifier, onClick = onClick) {
-        val label = if (todo != null) {
+        val label = if (todoViewModel != null) {
             "Modifier"
         } else {
             "Ajouter"

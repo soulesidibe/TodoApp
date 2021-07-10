@@ -48,27 +48,5 @@ class TodoListViewModel(
     fun get(id: String?): TodoViewModel? {
         return _todos.value?.firstOrNull { it.id == id }
     }
-//
-//    fun add(todoViewModel: TodoViewModel) {
-//        var exist = false
-//        val newList = todos.map { _todo ->
-//            if (_todo.id == todoViewModel.id) {
-//                exist = true
-//                todoViewModel
-//            } else _todo
-//        }
-//        todos.clear()
-//        todos.addAll(newList)
-//        if (!exist) {
-//            todos.add(todoViewModel)
-//        }
-//        _todos.postValue(todos)
-//    }
-//
-//    fun remove(id: String) {
-//        todos.removeAll {
-//            it.id == id
-//        }
-//    }
 
 }

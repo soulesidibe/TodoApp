@@ -8,7 +8,7 @@ import com.soulesidibe.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class TodoRepositoryImpl : TodoRepository {
+internal class TodoRepositoryImpl : TodoRepository {
 
     private val database: MutableList<TodoDb> = mutableListOf(
         TodoDb(title = "Task 1"),

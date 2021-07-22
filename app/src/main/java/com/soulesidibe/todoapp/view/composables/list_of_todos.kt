@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -29,14 +30,15 @@ import com.soulesidibe.todoapp.R
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.view.Screen
 import com.soulesidibe.todoapp.view.theme.Typography
+import com.soulesidibe.todoapp.viewmodel.ViewState
 
 @Composable
 fun TodosScreen(
-    data: LiveData<List<TodoViewModel>>,
+    data: LiveData<ViewState<List<TodoViewModel>>>,
     navController: NavHostController
 ) {
 
-    val todosState = data.observeAsState()
+    val todosState by data.observeAsState()
 
     Surface(color = MaterialTheme.colors.background) {
         val createTodo = {
@@ -56,21 +58,26 @@ fun TodosScreen(
                 }
             }
         ) {
-            val value = todosState.value
-            if (value == null || value.isEmpty()) {
-                //Show Empty view
-                TodosEmptyView { createTodo() }
-            } else {
+            when (todosState) {
+                is ViewState.Failed -> {
+                    //Show Empty view
+                    TodosEmptyView { createTodo() }
+                }
+                is ViewState.Loading -> TODO()
+                is ViewState.Success -> {
+                    TodoList(
+                        onClick = { todo ->
+                            navController.navigate(Screen.CreateTodoScreen.createRoute(todo.id))
+                        },
+                        todos = (todosState as ViewState.Success<List<TodoViewModel>>).data
+                    )
 
-                TodoList(
-                    onClick = { todo ->
-                        navController.navigate(Screen.CreateTodoScreen.createRoute(todo.id))
-                    },
-                    todos = value
-                )
+                }
+                null -> {
+                    //Show Empty view
+                    TodosEmptyView { createTodo() }
+                }
             }
-
-
         }
     }
 }

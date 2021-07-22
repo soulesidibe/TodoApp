@@ -3,6 +3,7 @@ package com.soulesidibe.data.repository
 import com.soulesidibe.data.model.TodoDb
 import com.soulesidibe.data.model.mapper.toDb
 import com.soulesidibe.data.model.mapper.toEntity
+import com.soulesidibe.domain.ResponseResult
 import com.soulesidibe.domain.entity.TodoEntity
 import com.soulesidibe.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
@@ -28,12 +29,16 @@ internal class TodoRepositoryImpl : TodoRepository {
         TodoDb(title = "Task 15"),
     )
 
-    private lateinit var todos: MutableStateFlow<List<TodoEntity>>
+    private lateinit var todos: MutableStateFlow<ResponseResult<List<TodoEntity>>>
 
     private val transform: (TodoDb) -> TodoEntity = { todoDb -> todoDb.toEntity() }
 
-    override suspend fun get(): Flow<List<TodoEntity>> {
-        todos = MutableStateFlow(database.map(transform))
+    override suspend fun get(): Flow<ResponseResult<List<TodoEntity>>> {
+        if (database.isEmpty()) {
+            todos = MutableStateFlow(ResponseResult.failure(Exception()))
+        } else {
+            todos = MutableStateFlow(ResponseResult.success(database.map(transform)))
+        }
         return todos
     }
 
@@ -43,7 +48,7 @@ internal class TodoRepositoryImpl : TodoRepository {
 
     override suspend fun add(todoEntity: TodoEntity): Boolean {
         database.add(todoEntity.toDb())
-        todos.emit(database.map(transform))
+        todos.emit(ResponseResult.success(database.map(transform)))
         return true
     }
 
@@ -51,7 +56,7 @@ internal class TodoRepositoryImpl : TodoRepository {
         val index = database.indexOfFirst { it.id == todoEntity.id }
         try {
             database[index] = todoEntity.toDb()
-            todos.emit(database.map(transform))
+            todos.emit(ResponseResult.success(database.map(transform)))
             return true
         } catch (e: Exception) {
             return false
@@ -60,7 +65,7 @@ internal class TodoRepositoryImpl : TodoRepository {
 
     override suspend fun remove(todoEntity: TodoEntity): Boolean {
         val result = database.removeAll { it.id == todoEntity.id }
-        todos.emit(database.map(transform))
+        todos.emit(ResponseResult.success(database.map(transform)))
         return result
     }
 }

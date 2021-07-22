@@ -6,8 +6,8 @@ import com.soulesidibe.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetTodosUseCase(private val repository: TodoRepository) :
-    UseCaseFlow<None, Flow<List<TodoEntity>>> {
-    override suspend fun execute(param: None): Flow<List<TodoEntity>> {
+    UseCaseFlow<None, Flow<ResponseResult<List<TodoEntity>>>> {
+    override suspend fun execute(param: None): Flow<ResponseResult<List<TodoEntity>>> {
         return repository.get()
     }
 }

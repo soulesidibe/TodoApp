@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.viewmodel.TodoDetailViewModel
+import com.soulesidibe.todoapp.viewmodel.ViewState
 
 @Composable
 fun CreateTodoScreen(
@@ -87,20 +88,37 @@ private fun CreateTodo(
     val removeState by viewModel.removeLiveData.observeAsState()
 
     removeState?.let {
-        if (it.isSuccess) {
-            navController.popBackStack()
-        } else {
-            TODO()
+        when (it) {
+            is ViewState.Failed -> {
+
+            }
+            is ViewState.Loading -> {
+
+            }
+            is ViewState.Success -> {
+                navController.popBackStack()
+            }
         }
         return
     }
 
     addOrUpdateState?.let {
-        if (it.isSuccess && it.getOrNull() == true) {
-            textFieldValue = ""
-            navController.popBackStack()
-        } else {
-            TODO()
+
+
+        when (addOrUpdateState) {
+            is ViewState.Failed -> {
+
+            }
+            is ViewState.Loading -> {
+
+            }
+            is ViewState.Success -> {
+                textFieldValue = ""
+                navController.popBackStack()
+            }
+            null -> {
+
+            }
         }
         return
     }

@@ -7,15 +7,15 @@ import java.lang.Exception
 
 class AddOrUpdateTodoUseCase(private val repository: TodoRepository) :
     UseCase<TodoEntity, Boolean> {
-    override suspend fun execute(param: TodoEntity): Result<Boolean> {
+    override suspend fun execute(param: TodoEntity): ResponseResult<Boolean> {
         try {
             if (repository.byId(param.id) != null) {
-                return Result.success(repository.update(param))
+                return ResponseResult.success(repository.update(param))
             } else {
-                return Result.success(repository.add(param))
+                return ResponseResult.success(repository.add(param))
             }
         } catch (e: Exception) {
-            return Result.failure(e)
+            return ResponseResult.failure(e)
         }
     }
 }

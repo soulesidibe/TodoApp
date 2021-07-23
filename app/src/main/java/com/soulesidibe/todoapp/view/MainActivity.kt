@@ -23,7 +23,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
 
     private val listViewModel: TodoListViewModel by viewModel()
-    private val todoDetailViewModel: TodoDetailViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            TodoAppTheme() {
+            TodoAppTheme {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
@@ -46,17 +45,28 @@ class MainActivity : ComponentActivity() {
 
                     composable(Screen.TodosScreen.route) {
                         // A surface container using the 'background' color from the theme
-                        TodosScreen(listViewModel.todosLiveData, navController = navController)
+                        TodosScreen(
+                            data = listViewModel.todosLiveData,
+                            navController = navController
+                        )
                     }
 
                     composable(
-                        Screen.CreateTodoScreen.route, arguments = listOf(
-                            navArgument("id") { type = NavType.StringType })
-                    ) {
+                        route = Screen.CreateTodoScreen.route,
+                        arguments = listOf(navArgument("id") { type = NavType.StringType })
+                    ) { navBackStackEntry ->
+                        val todoDetailViewModel: TodoDetailViewModel = get()
                         CreateTodoScreen(
-                            viewModel = get(),
                             navController = navController,
-                            todoViewModel = listViewModel.get(it.arguments?.getString("id"))
+                            onAddOrUpdate = { todoDetailViewModel.addOrUpdate(it) },
+                            todoViewModel = listViewModel.get(
+                                navBackStackEntry.arguments?.getString(
+                                    "id"
+                                )
+                            ),
+                            onRemove = { id -> todoDetailViewModel.remove(id) },
+                            addOrUpdateLiveData = todoDetailViewModel.addOrUpdateLiveData,
+                            removeLiveData = todoDetailViewModel.removeLiveData
                         )
                     }
                 }

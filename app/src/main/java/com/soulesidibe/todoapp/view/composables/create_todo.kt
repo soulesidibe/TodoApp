@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.viewmodel.TodoDetailViewModel
@@ -27,13 +28,22 @@ import com.soulesidibe.todoapp.viewmodel.ViewState
 
 @Composable
 fun CreateTodoScreen(
-    viewModel: TodoDetailViewModel,
     navController: NavHostController,
-    todoViewModel: TodoViewModel? = null
+    todoViewModel: TodoViewModel? = null,
+    addOrUpdateLiveData: LiveData<ViewState<Boolean>>,
+    removeLiveData: LiveData<ViewState<Boolean>>,
+    onAddOrUpdate: (TodoViewModel) -> Unit,
+    onRemove: (String) -> Unit
 ) {
     Surface(color = MaterialTheme.colors.background) {
-        Scaffold(topBar = { CreateTodoAppBar(todoViewModel, viewModel, navController) }) {
-            CreateTodo(todoViewModel, viewModel, navController)
+        Scaffold(topBar = { CreateTodoAppBar(todoViewModel, onRemove, navController) }) {
+            CreateTodo(
+                todoViewModel = todoViewModel,
+                addOrUpdateLiveData = addOrUpdateLiveData,
+                removeLiveData = removeLiveData,
+                onAddOrUpdate = onAddOrUpdate,
+                navController = navController
+            )
         }
     }
 }
@@ -41,7 +51,7 @@ fun CreateTodoScreen(
 @Composable
 private fun CreateTodoAppBar(
     todoViewModel: TodoViewModel?,
-    viewModel: TodoDetailViewModel,
+    onRemove: (String) -> Unit,
     navController: NavHostController
 ) {
     TopAppBar(
@@ -49,7 +59,7 @@ private fun CreateTodoAppBar(
             Text(text = "Add a todo")
         },
         actions = {
-            CreateTodoToolbarActions(todoViewModel, viewModel)
+            CreateTodoToolbarActions(todoViewModel, onRemove)
         },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
@@ -65,12 +75,12 @@ private fun CreateTodoAppBar(
 @Composable
 private fun CreateTodoToolbarActions(
     todoViewModel: TodoViewModel?,
-    viewModel: TodoDetailViewModel
+    onRemove: (String) -> Unit
 ) {
 
     todoViewModel?.let {
         IconButton(onClick = {
-            viewModel.remove(it.id)
+            onRemove(it.id)
         }) {
             Icon(imageVector = Icons.Default.Delete, "Description")
         }
@@ -80,13 +90,15 @@ private fun CreateTodoToolbarActions(
 @Composable
 private fun CreateTodo(
     todoViewModel: TodoViewModel?,
-    viewModel: TodoDetailViewModel,
+    addOrUpdateLiveData: LiveData<ViewState<Boolean>>,
+    removeLiveData: LiveData<ViewState<Boolean>>,
+    onAddOrUpdate: (TodoViewModel) -> Unit,
     navController: NavHostController
 ) {
     var textFieldValue by remember { mutableStateOf(todoViewModel?.title ?: "") }
-    val addOrUpdateState by viewModel.addOrUpdateLiveData.observeAsState()
+    val addOrUpdateState by addOrUpdateLiveData.observeAsState()
 
-    val removeState by viewModel.removeLiveData.observeAsState()
+    val removeState by removeLiveData.observeAsState()
 
     removeState?.let {
         when (it) {
@@ -125,8 +137,9 @@ private fun CreateTodo(
         Spacer(modifier = Modifier.height(8.dp))
 
         val onClick: () -> Unit = {
-            viewModel.addOrUpdate(
-                todoViewModel?.copy(title = textFieldValue) ?: TodoViewModel(title = textFieldValue)
+            onAddOrUpdate(
+                todoViewModel?.copy(title = textFieldValue)
+                    ?: TodoViewModel(title = textFieldValue)
             )
         }
 

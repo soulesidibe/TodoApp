@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.model.TodoViewModel
@@ -81,7 +83,6 @@ private fun CreateTodo(
     viewModel: TodoDetailViewModel,
     navController: NavHostController
 ) {
-
     var textFieldValue by remember { mutableStateOf(todoViewModel?.title ?: "") }
     val addOrUpdateState by viewModel.addOrUpdateLiveData.observeAsState()
 
@@ -90,10 +91,10 @@ private fun CreateTodo(
     removeState?.let {
         when (it) {
             is ViewState.Failed -> {
-
+                // Todo like addOrUpdateState
             }
             is ViewState.Loading -> {
-
+                // Todo like addOrUpdateState
             }
             is ViewState.Success -> {
                 navController.popBackStack()
@@ -103,24 +104,15 @@ private fun CreateTodo(
     }
 
     addOrUpdateState?.let {
-
-
         when (addOrUpdateState) {
-            is ViewState.Failed -> {
-
-            }
-            is ViewState.Loading -> {
-
-            }
             is ViewState.Success -> {
                 textFieldValue = ""
                 navController.popBackStack()
+                return
             }
-            null -> {
-
+            else -> {
             }
         }
-        return
     }
 
     Column(
@@ -138,11 +130,14 @@ private fun CreateTodo(
             )
         }
 
-        CreateTodoTitleInput(textFieldValue, { textFieldValue = it }, onClick)
+        CreateTodoTitleInput(textFieldValue, { textFieldValue = it }, onClick, addOrUpdateState)
         Spacer(modifier = Modifier.height(8.dp))
-        CreateTodoSubmitButton(onClick, modifier = Modifier.align(Alignment.End), todoViewModel)
-
-
+        CreateTodoSubmitButton(
+            onClick,
+            modifier = Modifier.align(Alignment.End),
+            todoViewModel,
+            addOrUpdateState
+        )
     }
 }
 
@@ -150,8 +145,20 @@ private fun CreateTodo(
 private fun CreateTodoTitleInput(
     value: String,
     onTextChange: (String) -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    addOrUpdateState: ViewState<Boolean>?
 ) {
+    var loadingState by remember { mutableStateOf(false) }
+    var errorState: Throwable? by remember { mutableStateOf(null) }
+
+    when (addOrUpdateState) {
+        is ViewState.Loading -> loadingState = true
+        is ViewState.Failed -> {
+            loadingState = false
+            errorState = addOrUpdateState.throwable
+        }
+        else -> loadingState = false
+    }
 
     OutlinedTextField(
         value = value,
@@ -159,6 +166,7 @@ private fun CreateTodoTitleInput(
             .fillMaxWidth()
             .wrapContentHeight(),
         maxLines = 1,
+        enabled = !loadingState,
         label = { Text(text = "Title") },
         singleLine = true,
         onValueChange = {
@@ -169,7 +177,8 @@ private fun CreateTodoTitleInput(
             autoCorrect = false,
             imeAction = ImeAction.Done
         ),
-        keyboardActions = KeyboardActions(onDone = { onClick() })
+        keyboardActions = KeyboardActions(onDone = { onClick() }),
+        isError = errorState != null
     )
 }
 
@@ -177,14 +186,22 @@ private fun CreateTodoTitleInput(
 private fun CreateTodoSubmitButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    todoViewModel: TodoViewModel?
+    todoViewModel: TodoViewModel?,
+    addOrUpdateState: ViewState<Boolean>?
 ) {
-    Button(modifier = modifier, onClick = onClick) {
+    var loadingState by remember { mutableStateOf(false) }
+
+    loadingState = when (addOrUpdateState) {
+        is ViewState.Loading -> true
+        else -> false
+    }
+
+    Button(modifier = modifier, onClick = onClick, enabled = !loadingState) {
         val label = if (todoViewModel != null) {
             "Modifier"
         } else {
             "Ajouter"
         }
-        Text(text = label)
+        Text(text = label, textAlign = TextAlign.Center)
     }
 }

@@ -9,6 +9,7 @@ import com.soulesidibe.domain.RemoveTodoUseCase
 import com.soulesidibe.domain.ResponseResult
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.model.toEntity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TodoDetailViewModel(
@@ -26,6 +27,7 @@ class TodoDetailViewModel(
     fun addOrUpdate(todo: TodoViewModel) {
         _addOrUpdateLiveData.postValue(ViewState.loading())
         viewModelScope.launch(dispatcher.io()) {
+            delay(3000)
             val result: ViewState<Boolean> = useCase.execute(todo.toEntity()).toViewState()
             _addOrUpdateLiveData.postValue(result)
         }

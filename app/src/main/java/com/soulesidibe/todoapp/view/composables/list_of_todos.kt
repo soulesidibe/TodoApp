@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,7 +64,9 @@ fun TodosScreen(
                     //Show Empty view
                     TodosEmptyView { createTodo() }
                 }
-                is ViewState.Loading -> TODO()
+                is ViewState.Loading -> {
+                    TodosCircularProgress()
+                }
                 is ViewState.Success -> {
                     TodoList(
                         onClick = { todo ->
@@ -79,6 +82,16 @@ fun TodosScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun TodosCircularProgress() {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight(), contentAlignment = Center) {
+
+        CircularProgressIndicator()
     }
 }
 

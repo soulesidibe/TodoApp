@@ -10,6 +10,7 @@ import com.soulesidibe.domain.ResponseResult
 import com.soulesidibe.domain.map
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.model.toTodoViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
@@ -25,8 +26,8 @@ class TodoListViewModel(
     val todosLiveData: LiveData<ViewState<List<TodoViewModel>>> = _todos
 
     init {
-        Result
         viewModelScope.launch(dispatcher.io()) {
+            _todos.postValue(ViewState.loading())
             try {
                 useCase.execute(None())
                     .map { responseResult ->

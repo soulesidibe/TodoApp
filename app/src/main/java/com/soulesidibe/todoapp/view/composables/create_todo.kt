@@ -119,7 +119,7 @@ private fun CreateTodo(
         when (addOrUpdateState) {
             is ViewState.Success -> {
                 textFieldValue = ""
-                navController.popBackStack()
+                navController.navigateUp()
                 return
             }
             else -> {

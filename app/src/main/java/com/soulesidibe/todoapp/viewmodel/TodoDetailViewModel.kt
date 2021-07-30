@@ -27,7 +27,6 @@ class TodoDetailViewModel(
     fun addOrUpdate(todo: TodoViewModel) {
         _addOrUpdateLiveData.postValue(ViewState.loading())
         viewModelScope.launch(dispatcher.io()) {
-            delay(3000)
             val result: ViewState<Boolean> = useCase.execute(todo.toEntity()).toViewState()
             _addOrUpdateLiveData.postValue(result)
         }

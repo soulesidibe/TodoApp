@@ -1,5 +1,6 @@
 package com.soulesidibe.todoapp.view.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,31 +8,24 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.model.TodoViewModel
-import com.soulesidibe.todoapp.viewmodel.TodoDetailViewModel
 import com.soulesidibe.todoapp.viewmodel.ViewState
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun CreateTodoScreen(
     navController: NavHostController,
     todoViewModel: TodoViewModel? = null,
-    addOrUpdateLiveData: LiveData<ViewState<Boolean>>,
-    removeLiveData: LiveData<ViewState<Boolean>>,
+    addOrUpdateFlow: StateFlow<ViewState<Boolean>>,
+    removeFlow: StateFlow<ViewState<Boolean>>,
     onAddOrUpdate: (TodoViewModel) -> Unit,
     onRemove: (String) -> Unit
 ) {
@@ -39,8 +33,8 @@ fun CreateTodoScreen(
         Scaffold(topBar = { CreateTodoAppBar(todoViewModel, onRemove, navController) }) {
             CreateTodo(
                 todoViewModel = todoViewModel,
-                addOrUpdateLiveData = addOrUpdateLiveData,
-                removeLiveData = removeLiveData,
+                addOrUpdateFlow = addOrUpdateFlow,
+                removeFlow = removeFlow,
                 onAddOrUpdate = onAddOrUpdate,
                 navController = navController
             )
@@ -90,40 +84,45 @@ private fun CreateTodoToolbarActions(
 @Composable
 private fun CreateTodo(
     todoViewModel: TodoViewModel?,
-    addOrUpdateLiveData: LiveData<ViewState<Boolean>>,
-    removeLiveData: LiveData<ViewState<Boolean>>,
+    addOrUpdateFlow: StateFlow<ViewState<Boolean>>,
+    removeFlow: StateFlow<ViewState<Boolean>>,
     onAddOrUpdate: (TodoViewModel) -> Unit,
     navController: NavHostController
 ) {
     var textFieldValue by remember { mutableStateOf(todoViewModel?.title ?: "") }
-    val addOrUpdateState by addOrUpdateLiveData.observeAsState()
 
-    val removeState by removeLiveData.observeAsState()
+    /*val lifecycleOwner = LocalLifecycleOwner.current
+    val locationFlowLifecycleAware = remember(addOrUpdateFlow, lifecycleOwner) {
+        addOrUpdateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+    }*/
 
-    removeState?.let {
-        when (it) {
-            is ViewState.Failed -> {
-                // Todo like addOrUpdateState
-            }
-            is ViewState.Loading -> {
-                // Todo like addOrUpdateState
-            }
-            is ViewState.Success -> {
-                navController.popBackStack()
-            }
+    val addOrUpdateState by addOrUpdateFlow.collectAsState()
+    val removeState by removeFlow.collectAsState()
+
+    when (removeState) {
+        is ViewState.Failed -> {
+            // Todo like addOrUpdateState
+            return
         }
-        return
+        is ViewState.Loading -> {
+            // Todo like addOrUpdateState
+            return
+        }
+        is ViewState.Success -> {
+            navController.popBackStack()
+            return
+        }
     }
 
-    addOrUpdateState?.let {
-        when (addOrUpdateState) {
-            is ViewState.Success -> {
-                textFieldValue = ""
-                navController.navigateUp()
-                return
-            }
-            else -> {
-            }
+    when (addOrUpdateState) {
+        is ViewState.Success -> {
+            Log.d("TodoDetail", "ViewState.Success addOrUpdate")
+            textFieldValue = ""
+            navController.navigateUp()
+            return
+        }
+        else -> {
+            Log.d("TodoDetail", "Else addOrUpdate")
         }
     }
 

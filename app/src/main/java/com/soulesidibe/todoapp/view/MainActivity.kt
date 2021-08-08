@@ -11,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.view.composables.CreateTodoScreen
 import com.soulesidibe.todoapp.view.composables.TodosScreen
 import com.soulesidibe.todoapp.view.theme.TodoAppTheme
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.TodosScreen.route) {
                         // A surface container using the 'background' color from the theme
                         TodosScreen(
-                            data = listViewModel.todosLiveData,
+                            data = listViewModel.todosState,
                             navController = navController
                         )
                     }
@@ -65,8 +64,8 @@ class MainActivity : ComponentActivity() {
                                 )
                             ),
                             onRemove = { id -> todoDetailViewModel.remove(id) },
-                            addOrUpdateLiveData = todoDetailViewModel.addOrUpdateLiveData,
-                            removeLiveData = todoDetailViewModel.removeLiveData
+                            addOrUpdateFlow = todoDetailViewModel.addOrUpdateState,
+                            removeFlow = todoDetailViewModel.removeState
                         )
                     }
                 }

@@ -8,8 +8,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -25,21 +25,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.R
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.view.Screen
 import com.soulesidibe.todoapp.view.theme.Typography
 import com.soulesidibe.todoapp.viewmodel.ViewState
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun TodosScreen(
-    data: LiveData<ViewState<List<TodoViewModel>>>,
+    data: StateFlow<ViewState<List<TodoViewModel>>>,
     navController: NavHostController
 ) {
 
-    val todosState by data.observeAsState()
+    val todosState by data.collectAsState()
 
     Surface(color = MaterialTheme.colors.background) {
         val createTodo = {
@@ -76,8 +76,7 @@ fun TodosScreen(
                     )
 
                 }
-                null -> {
-                    //Show Empty view
+                is ViewState.Idle -> {
                     TodosEmptyView { createTodo() }
                 }
             }

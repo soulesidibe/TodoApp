@@ -1,15 +1,15 @@
 package com.soulesidibe.todoapp.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.soulesidibe.domain.AddOrUpdateTodoUseCase
 import com.soulesidibe.domain.RemoveTodoUseCase
-import com.soulesidibe.domain.ResponseResult
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.model.toEntity
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class TodoDetailViewModel(
@@ -18,25 +18,25 @@ class TodoDetailViewModel(
     private val dispatcher: TodoCoroutineDispatcher
 ) : ViewModel() {
 
-    private val _addOrUpdateLiveData: MutableLiveData<ViewState<Boolean>> = MutableLiveData()
-    val addOrUpdateLiveData: LiveData<ViewState<Boolean>> = _addOrUpdateLiveData
+    private val _addOrUpdate: MutableStateFlow<ViewState<Boolean>> = MutableStateFlow(ViewState.idle())
+    val addOrUpdateState: StateFlow<ViewState<Boolean>> = _addOrUpdate.asStateFlow()
 
-    private val _removeLiveData: MutableLiveData<ViewState<Boolean>> = MutableLiveData()
-    val removeLiveData: LiveData<ViewState<Boolean>> = _removeLiveData
+    private val _remove: MutableStateFlow<ViewState<Boolean>> = MutableStateFlow(ViewState.idle())
+    val removeState: StateFlow<ViewState<Boolean>> = _remove
 
     fun addOrUpdate(todo: TodoViewModel) {
-        _addOrUpdateLiveData.postValue(ViewState.loading())
         viewModelScope.launch(dispatcher.io()) {
+            _addOrUpdate.emit(ViewState.loading())
             val result: ViewState<Boolean> = useCase.execute(todo.toEntity()).toViewState()
-            _addOrUpdateLiveData.postValue(result)
+            _addOrUpdate.emit(result)
         }
     }
 
     fun remove(id: String) {
-        _removeLiveData.postValue(ViewState.loading())
         viewModelScope.launch(dispatcher.io()) {
+            _remove.emit(ViewState.loading())
             val result: ViewState<Boolean> = removeUseCase.execute(id).toViewState()
-            _removeLiveData.postValue(result)
+            _remove.emit(result)
         }
     }
 }

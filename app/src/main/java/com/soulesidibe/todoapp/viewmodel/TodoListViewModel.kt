@@ -1,7 +1,5 @@
 package com.soulesidibe.todoapp.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.soulesidibe.domain.GetTodosUseCase
@@ -11,10 +9,7 @@ import com.soulesidibe.domain.map
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.model.toTodoViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class TodoListViewModel(
@@ -22,12 +17,13 @@ class TodoListViewModel(
     private val dispatcher: TodoCoroutineDispatcher
 ) : ViewModel() {
 
-    private val _todos: MutableLiveData<ViewState<List<TodoViewModel>>> = MutableLiveData()
-    val todosLiveData: LiveData<ViewState<List<TodoViewModel>>> = _todos
+    private val _todosState: MutableStateFlow<ViewState<List<TodoViewModel>>> = MutableStateFlow(ViewState.idle())
+    val todosState: StateFlow<ViewState<List<TodoViewModel>>> = _todosState
 
     init {
         viewModelScope.launch(dispatcher.io()) {
-            _todos.postValue(ViewState.loading())
+            _todosState.emit(ViewState.loading())
+            delay(3000)
             try {
                 useCase.execute(None())
                     .map { responseResult ->
@@ -39,17 +35,17 @@ class TodoListViewModel(
                         emit(ResponseResult.failure(Exception()))
                     }
                     .collect {
-                        _todos.postValue(it.toViewState())
+                        _todosState.emit(it.toViewState())
                     }
-            } catch (exception: Exception) {
-                _todos.postValue(ViewState.failed(Exception()))
+            } catch (exception: Throwable) {
+                _todosState.emit(ViewState.failed(Exception()))
             }
 
         }
     }
 
     fun get(id: String?): TodoViewModel? {
-        return (_todos.value as ViewState.Success).data.firstOrNull { it.id == id }
+        return (_todosState.value as ViewState.Success).data.firstOrNull { it.id == id }
     }
 
 }

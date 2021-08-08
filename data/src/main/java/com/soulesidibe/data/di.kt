@@ -5,5 +5,5 @@ import com.soulesidibe.domain.repository.TodoRepository
 import org.koin.dsl.module
 
 val dataModule = module {
-    single<TodoRepository> { TodoRepositoryImpl() }
+    single<TodoRepository> { TodoRepositoryImpl(get()) }
 }

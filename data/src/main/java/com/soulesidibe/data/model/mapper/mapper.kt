@@ -1,12 +1,12 @@
 package com.soulesidibe.data.model.mapper
 
-import com.soulesidibe.data.model.TodoDb
+import com.soulesidibe.data.model.TodoData
 import com.soulesidibe.domain.entity.TodoEntity
 
-internal fun TodoEntity.toDb(): TodoDb {
-    return TodoDb(this.id, this.title)
+internal fun TodoEntity.toDb(): TodoData {
+    return TodoData(this.id, this.title)
 }
 
-internal fun TodoDb.toEntity(): TodoEntity {
+internal fun TodoData.toEntity(): TodoEntity {
     return TodoEntity(id, title)
 }

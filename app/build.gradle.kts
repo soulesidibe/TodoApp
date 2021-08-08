@@ -44,7 +44,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
 //        kotlinCompilerVersion = "1.4.32"
-        kotlinCompilerVersion = "1.5.10"
+//        kotlinCompilerVersion = "1.5.10"
         kotlinCompilerExtensionVersion = "1.0.0"
     }
 }
@@ -52,6 +52,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":device"))
     val koin_version = "3.1.2"
     val compose_version = "1.0.0"
 

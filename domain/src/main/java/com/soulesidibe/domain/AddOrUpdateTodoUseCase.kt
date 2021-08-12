@@ -9,11 +9,7 @@ class AddOrUpdateTodoUseCase(private val repository: TodoRepository) :
     UseCase<TodoEntity, Boolean> {
     override suspend fun execute(param: TodoEntity): ResponseResult<Boolean> {
         try {
-            if (repository.byId(param.id) != null) {
-                return ResponseResult.success(repository.update(param))
-            } else {
-                return ResponseResult.success(repository.add(param))
-            }
+            return ResponseResult.success(repository.addOrUpdate(param))
         } catch (e: Exception) {
             return ResponseResult.failure(e)
         }

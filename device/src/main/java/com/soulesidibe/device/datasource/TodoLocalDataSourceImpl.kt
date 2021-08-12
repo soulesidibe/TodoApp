@@ -15,8 +15,8 @@ internal class TodoLocalDataSourceImpl(
         return dao.getAll().map { todoDb -> todoDb.map { TodoData(it.id, it.title) } }
     }
 
-    override suspend fun getBy(id: String): TodoData {
-        return dao.getById(id).let { TodoData(it.id, it.title) }
+    override suspend fun getBy(id: String): TodoData? {
+        return dao.getById(id)?.let { TodoData(it.id, it.title) }
     }
 
     override suspend fun insert(todo: TodoData): Boolean {

@@ -1,5 +1,6 @@
 package com.soulesidibe.todoapp.view.composables
 
+import android.os.Bundle
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.navArgument
 import com.soulesidibe.todoapp.R
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.view.Screen
@@ -43,7 +45,7 @@ fun TodosScreen(
 
     Surface(color = MaterialTheme.colors.background) {
         val createTodo = {
-            navController.navigate(Screen.CreateTodoScreen.route)
+            navController.navigate(Screen.CreateTodoScreen.createRoute("null"))
         }
         Scaffold(
             topBar = {
@@ -86,9 +88,11 @@ fun TodosScreen(
 
 @Composable
 private fun TodosCircularProgress() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(), contentAlignment = Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(), contentAlignment = Center
+    ) {
 
         CircularProgressIndicator()
     }

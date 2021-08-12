@@ -1,6 +1,5 @@
 package com.soulesidibe.todoapp.view.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,26 +16,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.model.TodoViewModel
+import com.soulesidibe.todoapp.viewmodel.TodoDetailViewModel
 import com.soulesidibe.todoapp.viewmodel.ViewState
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun CreateTodoScreen(
     navController: NavHostController,
-    todoViewModel: TodoViewModel? = null,
-    addOrUpdateFlow: StateFlow<ViewState<Boolean>>,
-    removeFlow: StateFlow<ViewState<Boolean>>,
-    onAddOrUpdate: (TodoViewModel) -> Unit,
-    onRemove: (String) -> Unit
+    viewModel: TodoDetailViewModel,
+    todoId: String,
 ) {
+    val todoState by viewModel.getTodoBy(todoId).collectAsState(initial = ViewState.idle())
+    val onRemove: (String) -> Unit = { id -> viewModel.remove(id) }
+    val onAddOrUpdate: (TodoViewModel) -> Unit = { viewModel.addOrUpdate(it) }
+    val onNavigationUp: () -> Unit = { navController.navigateUp() }
+
     Surface(color = MaterialTheme.colors.background) {
-        Scaffold(topBar = { CreateTodoAppBar(todoViewModel, onRemove, navController) }) {
+
+        Scaffold(topBar = { CreateTodoAppBar(todoState, onRemove, onNavigationUp) }) {
             CreateTodo(
-                todoViewModel = todoViewModel,
-                addOrUpdateFlow = addOrUpdateFlow,
-                removeFlow = removeFlow,
+                todoState = todoState,
+                addOrUpdateFlow = viewModel.addOrUpdateState,
+                removeFlow = viewModel.removeState,
                 onAddOrUpdate = onAddOrUpdate,
-                navController = navController
+                onNavigationUp = onNavigationUp
             )
         }
     }
@@ -44,19 +47,19 @@ fun CreateTodoScreen(
 
 @Composable
 private fun CreateTodoAppBar(
-    todoViewModel: TodoViewModel?,
+    todoId: ViewState<TodoViewModel>,
     onRemove: (String) -> Unit,
-    navController: NavHostController
+    onNavigationUp: () -> Unit
 ) {
     TopAppBar(
         title = {
             Text(text = "Add a todo")
         },
         actions = {
-            CreateTodoToolbarActions(todoViewModel, onRemove)
+            CreateTodoToolbarActions(todoId, onRemove)
         },
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { onNavigationUp() }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Go back"
@@ -68,13 +71,13 @@ private fun CreateTodoAppBar(
 
 @Composable
 private fun CreateTodoToolbarActions(
-    todoViewModel: TodoViewModel?,
+    todoId: ViewState<TodoViewModel>,
     onRemove: (String) -> Unit
 ) {
 
-    todoViewModel?.let {
+    todoId.getDataOrNull()?.id?.let {
         IconButton(onClick = {
-            onRemove(it.id)
+            onRemove(it)
         }) {
             Icon(imageVector = Icons.Default.Delete, "Description")
         }
@@ -83,13 +86,13 @@ private fun CreateTodoToolbarActions(
 
 @Composable
 private fun CreateTodo(
-    todoViewModel: TodoViewModel?,
+    todoState: ViewState<TodoViewModel>,
     addOrUpdateFlow: StateFlow<ViewState<Boolean>>,
     removeFlow: StateFlow<ViewState<Boolean>>,
     onAddOrUpdate: (TodoViewModel) -> Unit,
-    navController: NavHostController
+    onNavigationUp: () -> Unit
 ) {
-    var textFieldValue by remember { mutableStateOf(todoViewModel?.title ?: "") }
+    var textFieldValue by remember(todoState) { mutableStateOf(todoState.getDataOrNull()?.title ?: "") }
 
     /*val lifecycleOwner = LocalLifecycleOwner.current
     val locationFlowLifecycleAware = remember(addOrUpdateFlow, lifecycleOwner) {
@@ -109,20 +112,18 @@ private fun CreateTodo(
             return
         }
         is ViewState.Success -> {
-            navController.popBackStack()
+            onNavigationUp()
             return
         }
     }
 
     when (addOrUpdateState) {
         is ViewState.Success -> {
-            Log.d("TodoDetail", "ViewState.Success addOrUpdate")
             textFieldValue = ""
-            navController.navigateUp()
+            onNavigationUp()
             return
         }
         else -> {
-            Log.d("TodoDetail", "Else addOrUpdate")
         }
     }
 
@@ -137,8 +138,9 @@ private fun CreateTodo(
 
         val onClick: () -> Unit = {
             onAddOrUpdate(
-                todoViewModel?.copy(title = textFieldValue)
-                    ?: TodoViewModel(title = textFieldValue)
+                todoState.getDataOrNull()?.copy(
+                    title = textFieldValue
+                ) ?: TodoViewModel(title = textFieldValue)
             )
         }
 
@@ -147,7 +149,7 @@ private fun CreateTodo(
         CreateTodoSubmitButton(
             onClick,
             modifier = Modifier.align(Alignment.End),
-            todoViewModel,
+            todoState,
             addOrUpdateState
         )
     }
@@ -198,7 +200,7 @@ private fun CreateTodoTitleInput(
 private fun CreateTodoSubmitButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    todoViewModel: TodoViewModel?,
+    todoState: ViewState<TodoViewModel>,
     addOrUpdateState: ViewState<Boolean>?
 ) {
     var loadingState by remember { mutableStateOf(false) }
@@ -209,7 +211,7 @@ private fun CreateTodoSubmitButton(
     }
 
     Button(modifier = modifier, onClick = onClick, enabled = !loadingState) {
-        val label = if (todoViewModel != null) {
+        val label = if (todoState is ViewState.Success) {
             "Modifier"
         } else {
             "Ajouter"

@@ -57,15 +57,8 @@ class MainActivity : ComponentActivity() {
                         val todoDetailViewModel: TodoDetailViewModel = get()
                         CreateTodoScreen(
                             navController = navController,
-                            onAddOrUpdate = { todoDetailViewModel.addOrUpdate(it) },
-                            todoViewModel = listViewModel.get(
-                                navBackStackEntry.arguments?.getString(
-                                    "id"
-                                )
-                            ),
-                            onRemove = { id -> todoDetailViewModel.remove(id) },
-                            addOrUpdateFlow = todoDetailViewModel.addOrUpdateState,
-                            removeFlow = todoDetailViewModel.removeState
+                            viewModel = todoDetailViewModel,
+                            todoId = navBackStackEntry.arguments?.getString("id") ?: ""
                         )
                     }
                 }

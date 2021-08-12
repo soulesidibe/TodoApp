@@ -8,6 +8,6 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { TodoCoroutineDispatcher() }
-    viewModel { TodoDetailViewModel(get(), get(), get()) }
+    viewModel { TodoDetailViewModel(get(), get(), get(), get()) }
     viewModel { TodoListViewModel(get(), get()) }
 }

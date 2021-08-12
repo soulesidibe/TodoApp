@@ -6,6 +6,14 @@ sealed class ViewState<T> {
     class Failed<T>(val throwable: Throwable) : ViewState<T>()
     class Idle<T> : ViewState<T>()
 
+    fun getDataOrNull(): T? {
+        return try {
+            (this as Success<T>).data
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     companion object {
         fun <T> loading() = Loading<T>()
         fun <T> success(data: T) = Success(data)

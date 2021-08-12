@@ -7,7 +7,7 @@ interface TodoLocalDataSource {
 
     fun getAll(): Flow<List<TodoData>>
 
-    suspend fun getBy(id: String): TodoData
+    suspend fun getBy(id: String): TodoData?
 
     suspend fun insert(todo: TodoData): Boolean
 

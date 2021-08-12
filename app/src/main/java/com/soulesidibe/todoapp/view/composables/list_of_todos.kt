@@ -1,6 +1,5 @@
 package com.soulesidibe.todoapp.view.composables
 
-import android.os.Bundle
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,39 +26,26 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.navArgument
 import com.soulesidibe.todoapp.R
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.view.Screen
 import com.soulesidibe.todoapp.view.theme.Typography
+import com.soulesidibe.todoapp.viewmodel.TodoListViewModel
 import com.soulesidibe.todoapp.viewmodel.ViewState
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun TodosScreen(
-    data: StateFlow<ViewState<List<TodoViewModel>>>,
+    todoListViewModel: TodoListViewModel,
     navController: NavHostController
 ) {
-
-    val todosState by data.collectAsState()
-
+    val todosState by todoListViewModel.todosState.collectAsState()
     Surface(color = MaterialTheme.colors.background) {
         val createTodo = {
             navController.navigate(Screen.CreateTodoScreen.createRoute("null"))
         }
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = "Todo Compose")
-                    }
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(onClick = createTodo) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = "add a todo")
-                }
-            }
+            topBar = { TopBar() },
+            floatingActionButton = { AddTodoButton(createTodo) }
         ) {
             when (todosState) {
                 is ViewState.Failed -> {
@@ -76,7 +62,6 @@ fun TodosScreen(
                         },
                         todos = (todosState as ViewState.Success<List<TodoViewModel>>).data
                     )
-
                 }
                 is ViewState.Idle -> {
                     TodosEmptyView { createTodo() }
@@ -84,6 +69,22 @@ fun TodosScreen(
             }
         }
     }
+}
+
+@Composable
+private fun AddTodoButton(createTodo: () -> Unit) {
+    FloatingActionButton(onClick = createTodo) {
+        Icon(imageVector = Icons.Filled.Add, contentDescription = "add a todo")
+    }
+}
+
+@Composable
+private fun TopBar() {
+    TopAppBar(
+        title = {
+            Text(text = "Todo Compose")
+        }
+    )
 }
 
 @Composable
@@ -184,12 +185,15 @@ fun PreviewTodoItem() {
     TodoItem(todoViewModel = TodoViewModel(title = "This is a test todo"), onItemClick = {})
 }
 
-@Preview(device = Devices.PIXEL_4, showSystemUi = true, name = "The todo list")
+@Preview(device = Devices.PIXEL_4, showSystemUi = true, name = "The empty")
 @Composable
-fun PreviewTodoList() {
-    TodoList(
-        onClick = { },
-        todos = listOf()
-    )
+fun PreviewTodoEmpty() {
+    TodosEmptyView { }
 
+}
+
+@Preview(device = Devices.PIXEL_4, showSystemUi = true, name = "Loading screen")
+@Composable
+fun PreviewLoading() {
+    TodosCircularProgress()
 }

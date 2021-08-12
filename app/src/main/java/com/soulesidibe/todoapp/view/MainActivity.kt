@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.TodosScreen.route) {
                         // A surface container using the 'background' color from the theme
                         TodosScreen(
-                            data = listViewModel.todosState,
+                            todoListViewModel = listViewModel,
                             navController = navController
                         )
                     }

@@ -92,28 +92,24 @@ private fun CreateTodo(
     onAddOrUpdate: (TodoViewModel) -> Unit,
     onNavigationUp: () -> Unit
 ) {
-    var textFieldValue by remember(todoState) { mutableStateOf(todoState.getDataOrNull()?.title ?: "") }
-
-    /*val lifecycleOwner = LocalLifecycleOwner.current
-    val locationFlowLifecycleAware = remember(addOrUpdateFlow, lifecycleOwner) {
-        addOrUpdateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-    }*/
-
+    var textFieldValue by remember(todoState) {
+        mutableStateOf(
+            todoState.getDataOrNull()?.title ?: ""
+        )
+    }
     val addOrUpdateState by addOrUpdateFlow.collectAsState()
     val removeState by removeFlow.collectAsState()
 
     when (removeState) {
         is ViewState.Failed -> {
-            // Todo like addOrUpdateState
-            return
         }
         is ViewState.Loading -> {
-            // Todo like addOrUpdateState
-            return
         }
         is ViewState.Success -> {
             onNavigationUp()
             return
+        }
+        is ViewState.Idle -> {
         }
     }
 

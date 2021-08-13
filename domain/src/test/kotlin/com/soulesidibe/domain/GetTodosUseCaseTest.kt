@@ -18,13 +18,13 @@ class GetTodosUseCaseTest {
     @Test
     fun `should get the list of todos`() = runBlockingTest {
         val repository = mock(TodoRepository::class.java)
-        `when`(repository.get()).thenReturn(flowOf(ResponseResult.success(listOf())))
+        `when`(repository.get()).thenReturn(flowOf(Response.success(listOf())))
 
         val useCase: GetTodosUseCase = GetTodosUseCase(repository)
         val result = useCase.execute(None())
 
         assertEquals(
-            ResponseResult.Success<List<TodoEntity>>(listOf()),
+            Response.Success<List<TodoEntity>>(listOf()),
             result.firstOrNull()
         )
     }
@@ -33,13 +33,13 @@ class GetTodosUseCaseTest {
     @Test
     fun `should get a fail response`() = runBlockingTest {
         val repository = mock(TodoRepository::class.java)
-        `when`(repository.get()).thenReturn(flowOf(ResponseResult.failure(NoTodosFoundException)))
+        `when`(repository.get()).thenReturn(flowOf(Response.failure(NoTodosFoundException)))
 
         val useCase: GetTodosUseCase = GetTodosUseCase(repository)
         val result = useCase.execute(None())
 
         assertEquals(
-            ResponseResult.Error<NoTodosFoundException>(NoTodosFoundException),
+            Response.Error<NoTodosFoundException>(NoTodosFoundException),
             result.firstOrNull()
         )
     }

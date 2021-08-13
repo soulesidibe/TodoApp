@@ -4,7 +4,7 @@ import com.soulesidibe.data.datasource.TodoLocalDataSource
 import com.soulesidibe.data.model.TodoData
 import com.soulesidibe.data.model.mapper.toDb
 import com.soulesidibe.data.model.mapper.toEntity
-import com.soulesidibe.domain.ResponseResult
+import com.soulesidibe.domain.Response
 import com.soulesidibe.domain.entity.TodoEntity
 import com.soulesidibe.domain.exception.CannotAddOrUpdateException
 import com.soulesidibe.domain.exception.NoTodosFoundException
@@ -19,12 +19,12 @@ internal class TodoRepositoryImpl(
 
     private val transform: (TodoData) -> TodoEntity = { todoDb -> todoDb.toEntity() }
 
-    override suspend fun get(): Flow<ResponseResult<List<TodoEntity>>> {
+    override suspend fun get(): Flow<Response<List<TodoEntity>>> {
         return dataSource.getAll().map { list ->
             if (list.isEmpty()) {
-                ResponseResult.failure(NoTodosFoundException)
+                Response.failure(NoTodosFoundException)
             } else {
-                ResponseResult.success(list.map(transform))
+                Response.success(list.map(transform))
             }
         }
     }

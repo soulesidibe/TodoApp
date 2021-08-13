@@ -1,14 +1,14 @@
 package com.soulesidibe.todoapp.viewmodel
 
-import com.soulesidibe.domain.ResponseResult
+import com.soulesidibe.domain.Response
 
-fun <T> ResponseResult<T>.toViewState(): ViewState<T> {
+fun <T> Response<T>.toViewState(): ViewState<T> {
     return this.let {
         when (it) {
-            is ResponseResult.Error -> {
+            is Response.Error -> {
                 ViewState.failed(it.throwable)
             }
-            is ResponseResult.Success -> {
+            is Response.Success -> {
                 ViewState.success(it.data)
             }
         }

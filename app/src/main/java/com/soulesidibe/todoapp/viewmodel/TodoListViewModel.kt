@@ -28,7 +28,7 @@ class TodoListViewModel(
                         }
                     }.flowOn(dispatcher.io())
                     .catch {
-                        emit(ResponseResult.failure(Exception()))
+                        emit(Response.failure(Exception()))
                     }
                     .collect {
                         _todosState.emit(it.toViewState())

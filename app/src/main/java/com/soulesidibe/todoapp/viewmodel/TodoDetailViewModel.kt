@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.soulesidibe.domain.AddOrUpdateTodoUseCase
 import com.soulesidibe.domain.GetTodoUseCase
 import com.soulesidibe.domain.RemoveTodoUseCase
-import com.soulesidibe.domain.ResponseResult
+import com.soulesidibe.domain.Response
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.model.toEntity
 import com.soulesidibe.todoapp.model.toTodoViewModel
@@ -44,8 +44,8 @@ class TodoDetailViewModel(
 
     fun getTodoBy(id: String) = flow<ViewState<TodoViewModel>> {
         when (val result = todoUseCase.execute(id)) {
-            is ResponseResult.Error -> emit(ViewState.failed(result.throwable))
-            is ResponseResult.Success -> emit(ViewState.success(result.data.toTodoViewModel()))
+            is Response.Error -> emit(ViewState.failed(result.throwable))
+            is Response.Success -> emit(ViewState.success(result.data.toTodoViewModel()))
         }
     }.flowOn(dispatcher.io())
 }

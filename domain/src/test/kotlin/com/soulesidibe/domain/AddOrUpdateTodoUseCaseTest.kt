@@ -22,7 +22,7 @@ class AddOrUpdateTodoUseCaseTest {
 
         val usecase = AddOrUpdateTodoUseCase(repository)
         val responseResult = usecase.execute(todo)
-        assertEquals(ResponseResult.success(true), responseResult)
+        assertEquals(Response.success(true), responseResult)
     }
 
     @Test
@@ -34,7 +34,7 @@ class AddOrUpdateTodoUseCaseTest {
         val useCase = AddOrUpdateTodoUseCase(repository)
         val responseResult = useCase.execute(todo)
         assertEquals(
-            ResponseResult.Error<CannotAddOrUpdateException>(CannotAddOrUpdateException),
+            Response.Error<CannotAddOrUpdateException>(CannotAddOrUpdateException),
             responseResult
         )
     }

@@ -5,12 +5,12 @@ import com.soulesidibe.domain.repository.TodoRepository
 
 class AddOrUpdateTodoUseCase(private val repository: TodoRepository) :
     UseCase<TodoEntity, Boolean> {
-    override suspend fun execute(param: TodoEntity): ResponseResult<Boolean> {
+    override suspend fun execute(param: TodoEntity): Response<Boolean> {
         try {
             repository.addOrUpdate(param)
-            return ResponseResult.success(true)
+            return Response.success(true)
         } catch (e: Throwable) {
-            return ResponseResult.failure(e)
+            return Response.failure(e)
         }
     }
 }

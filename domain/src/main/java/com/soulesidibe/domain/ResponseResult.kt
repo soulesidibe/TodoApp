@@ -1,8 +1,5 @@
 package com.soulesidibe.domain
 
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-
 sealed class ResponseResult<T> {
     data class Success<T>(val data: T) : ResponseResult<T>()
     data class Error<T>(val throwable: Throwable) : ResponseResult<T>()

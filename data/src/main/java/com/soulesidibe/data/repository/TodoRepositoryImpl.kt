@@ -7,6 +7,7 @@ import com.soulesidibe.data.model.mapper.toEntity
 import com.soulesidibe.domain.ResponseResult
 import com.soulesidibe.domain.entity.TodoEntity
 import com.soulesidibe.domain.exception.CannotAddOrUpdateException
+import com.soulesidibe.domain.exception.NoTodosFoundException
 import com.soulesidibe.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,7 +22,7 @@ internal class TodoRepositoryImpl(
     override suspend fun get(): Flow<ResponseResult<List<TodoEntity>>> {
         return dataSource.getAll().map { list ->
             if (list.isEmpty()) {
-                ResponseResult.failure(Exception())
+                ResponseResult.failure(NoTodosFoundException)
             } else {
                 ResponseResult.success(list.map(transform))
             }

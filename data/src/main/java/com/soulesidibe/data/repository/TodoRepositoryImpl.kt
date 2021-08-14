@@ -7,6 +7,7 @@ import com.soulesidibe.data.model.mapper.toEntity
 import com.soulesidibe.domain.Response
 import com.soulesidibe.domain.entity.TodoEntity
 import com.soulesidibe.domain.exception.CannotAddOrUpdateException
+import com.soulesidibe.domain.exception.CannotRemoveTodoException
 import com.soulesidibe.domain.exception.NoTodosFoundException
 import com.soulesidibe.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
@@ -43,7 +44,11 @@ internal class TodoRepositoryImpl(
     }
 
     override suspend fun remove(todoEntity: TodoEntity): Boolean {
-        dataSource.remove(todoEntity.toDb())
-        return true
+        try {
+            dataSource.remove(todoEntity.toDb())
+            return true
+        } catch (e: SQLException) {
+            throw CannotRemoveTodoException
+        }
     }
 }

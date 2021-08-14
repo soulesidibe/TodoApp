@@ -27,4 +27,5 @@ Device module depends on Data.
 
 ## Todo
 * Unit tests and UI testing
+* Centralize dependencies
 * Animation between Composables

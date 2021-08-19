@@ -3,6 +3,10 @@ plugins {
     id("kotlin-android")
 }
 
+apply {
+    from(file("$rootDir/gradle_tests_report.gradle.kts"))
+}
+
 android {
     compileSdk = 30
     buildToolsVersion = "30.0.3"

@@ -3,6 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
 }
+apply {
+    from(file("$rootDir/gradle_tests_report.gradle.kts"))
+}
 
 android {
     compileSdk 30

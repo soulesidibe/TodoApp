@@ -17,7 +17,7 @@ Domain module has no module dependency.
 Data module depends on domain.  
 Device module depends on Data.  
 
-##Libraries
+## Libraries
 
 * [Jetpack Compose](https://developer.android.com/jetpack/compose)
 * Jetpack libraries ([Room](https://developer.android.com/training/data-storage/room), [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel?hl=en))
@@ -26,6 +26,6 @@ Device module depends on Data.
 * [Accompanist](https://google.github.io/accompanist/)
 
 ## Todo
-* Unit tests and UI testing
+* UI testing
 * Centralize dependencies
 * Animation between Composables

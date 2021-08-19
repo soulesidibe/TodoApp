@@ -74,7 +74,7 @@ dependencies {
     implementation("androidx.compose.compiler:compiler:${compose_version}")
     implementation("androidx.compose.material:material-icons-core:${compose_version}")
     implementation("androidx.compose.material:material-icons-extended:${compose_version}")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.14.0")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.16.1")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03")
     implementation("androidx.activity:activity-compose:1.3.1")

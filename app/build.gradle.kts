@@ -8,13 +8,13 @@ apply {
 }
 
 android {
-    compileSdk = 30
+    compileSdk = Versions.compileSdk
     buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "com.soulesidibe.todoapp"
-        minSdk = 21
-        targetSdk = 30
+        minSdk = Versions.minSdk
+        targetSdk = Versions.compileSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -39,17 +39,13 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
-
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-//        kotlinCompilerVersion = "1.4.32"
-//        kotlinCompilerVersion = "1.5.10"
-        kotlinCompilerExtensionVersion = "1.0.0"
+        kotlinCompilerExtensionVersion = Versions.compose
+        kotlinCompilerExtensionVersion = Versions.compose
     }
 }
 
@@ -57,33 +53,33 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":device"))
-    val koin_version = "3.1.2"
-    val compose_version = "1.0.0"
 
-    // Koin core features
-    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation(Deps.koin_core)
+    implementation(Deps.koin_android)
+    implementation(Deps.androidx_core_ktx)
+    implementation(Deps.androidx_app_compat)
+    implementation(Deps.material)
+    implementation(Deps.androidx_compose_constraint_layout)
+    implementation(Deps.androidx_compose_navigation)
+    implementation(Deps.androidx_compose_material)
+    implementation(Deps.androidx_compose_ui)
+    implementation(Deps.androidx_compose_tooling)
+    implementation(Deps.androidx_compose_compiler)
+    implementation(Deps.androidx_compose_material_icons_core)
+    implementation(Deps.androidx_compose_material_icons_extended)
+    implementation(Deps.accompanist_system_ui_controller)
+
+    implementation(Deps.androidx_lifecycle_runtime)
+    implementation(Deps.androidx_compose_activity)
     // Koin test features
-    testImplementation("io.insert-koin:koin-test:$koin_version")
-    // Koin main features for Android (Scope,ViewModel ...)
-    implementation("io.insert-koin:koin-android:$koin_version")
+    androidTestImplementation(Deps.androidx_junit)
+    androidTestImplementation(Deps.androidx_espresso)
+    androidTestImplementation(Deps.androidx__compose_junit)
 
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02")
-    implementation("androidx.navigation:navigation-compose:2.4.0-alpha06")
-    implementation("androidx.compose.material:material:${compose_version}")
-    implementation("androidx.compose.ui:ui:${compose_version}")
-    implementation("androidx.compose.ui:ui-tooling:${compose_version}")
-    implementation("androidx.compose.compiler:compiler:${compose_version}")
-    implementation("androidx.compose.material:material-icons-core:${compose_version}")
-    implementation("androidx.compose.material:material-icons-extended:${compose_version}")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.16.1")
-
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03")
-    implementation("androidx.activity:activity-compose:1.3.1")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${compose_version}")
+    testImplementation(Deps.junit)
+    testImplementation(Deps.coroutines_test)
+    testImplementation(Deps.hamcrest)
+    testImplementation(Deps.mockito)
+    testImplementation(Deps.mockk)
+    testImplementation(Deps.koin_test)
 }

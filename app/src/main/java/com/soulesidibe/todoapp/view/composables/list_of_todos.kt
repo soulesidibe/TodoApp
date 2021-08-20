@@ -10,13 +10,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -123,7 +123,7 @@ fun TodosEmptyView(onAdd: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(), contentAlignment = Alignment.Center
+            .fillMaxHeight(), contentAlignment = Center
     ) {
 
         Column {
@@ -134,11 +134,11 @@ fun TodosEmptyView(onAdd: () -> Unit) {
                 contentDescription = "Empty todo list"
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Vous n'avez pas encore de todo :(", color = Color.Gray)
+            Text(text = stringResource(R.string.str_no_todos), color = Color.Gray)
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Ajouter un nouveau todo",
+                text = stringResource(R.string.str_add_todo),
                 color = Color.Gray,
                 modifier = Modifier
                     .clickable { onAdd() }

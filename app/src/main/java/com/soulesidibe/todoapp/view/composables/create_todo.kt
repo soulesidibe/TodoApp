@@ -10,11 +10,13 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.soulesidibe.todoapp.R
 import com.soulesidibe.todoapp.model.TodoViewModel
 import com.soulesidibe.todoapp.viewmodel.TodoDetailViewModel
 import com.soulesidibe.todoapp.viewmodel.ViewState
@@ -53,7 +55,7 @@ private fun CreateTodoAppBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = "Add a todo")
+            Text(text = stringResource(R.string.str_toolbar_title))
         },
         actions = {
             CreateTodoToolbarActions(todoId, onRemove)
@@ -129,7 +131,7 @@ private fun CreateTodo(
             .fillMaxHeight()
             .fillMaxWidth()
     ) {
-        Text(text = "Veuillez fournir un titre a votre todo.")
+        Text(text = stringResource(R.string.str_add_todo_explanation))
         Spacer(modifier = Modifier.height(8.dp))
 
         val onClick: () -> Unit = {
@@ -208,9 +210,9 @@ private fun CreateTodoSubmitButton(
 
     Button(modifier = modifier, onClick = onClick, enabled = !loadingState) {
         val label = if (todoState is ViewState.Success) {
-            "Modifier"
+            stringResource(R.string.btn_edit_todo)
         } else {
-            "Ajouter"
+            stringResource(R.string.btn_add_todo)
         }
         Text(text = label, textAlign = TextAlign.Center)
     }

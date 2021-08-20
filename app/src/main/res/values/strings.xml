@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Todo App</string>
+    <string name="str_no_todos">Vous n\'avez pas encore de todo :(</string>
+    <string name="str_add_todo">Ajouter un nouveau todo</string>
+    <string name="btn_edit_todo">Modifier</string>
+    <string name="btn_add_todo">Ajouter</string>
+    <string name="str_add_todo_explanation">Veuillez fournir un titre a votre todo.</string>
+    <string name="str_toolbar_title">Add a todo</string>
 </resources>

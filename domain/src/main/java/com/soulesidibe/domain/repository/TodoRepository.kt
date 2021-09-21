@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface TodoRepository {
 
     @Throws(NoTodosFoundException::class)
-    suspend fun get(): Flow<Response<List<TodoEntity>>>
+    fun get(): Flow<Response<List<TodoEntity>>>
 
     suspend fun byId(id: String): TodoEntity?
 

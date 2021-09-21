@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetTodosUseCase(private val repository: TodoRepository) :
     UseCaseFlow<None, Flow<Response<List<TodoEntity>>>> {
-    override suspend fun execute(param: None): Flow<Response<List<TodoEntity>>> {
+    override fun execute(param: None): Flow<Response<List<TodoEntity>>> {
         return repository.get()
     }
 }

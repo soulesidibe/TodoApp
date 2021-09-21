@@ -20,7 +20,7 @@ internal class TodoRepositoryImpl(
 
     private val transform: (TodoData) -> TodoEntity = { todoDb -> todoDb.toEntity() }
 
-    override suspend fun get(): Flow<Response<List<TodoEntity>>> {
+    override fun get(): Flow<Response<List<TodoEntity>>> {
         return dataSource.getAll().map { list ->
             if (list.isEmpty()) {
                 Response.failure(NoTodosFoundException)

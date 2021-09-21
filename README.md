@@ -2,16 +2,16 @@
 a small todo app build with Jetpack Compose
 
 ## Features
-It's a very basic todo app. You can list, add edit and removes todos
+It's a very basic todo app. You can list, add, edit and remove todos.
 
 ## Architecture
-This project use a [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) with modules:
+This project is based on [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) with the following modules:
 * domain(kotlin) module for use cases and entities
-* data(kotlin) module for repository implementation
+* data(kotlin) module for repository implementations
 * device(android) for implementation details related to the data sources
 * app module which is the presentation layer and where MVVM is used
 
-App module depends on all module because of dependency injection. We need to retrieve koin modules. all the implementations 
+App module depends on all modules because of dependency injection. We need to retrieve koin modules. all the implementations
 use kotlin internal modifier. So in theory App module depends only on domain module.  
 Domain module has no module dependency.  
 Data module depends on domain.  
@@ -27,5 +27,5 @@ Device module depends on Data.
 
 ## Todo
 * UI testing
-* Centralize dependencies
-* Animation between Composables
+* Animations
+* CI/CD

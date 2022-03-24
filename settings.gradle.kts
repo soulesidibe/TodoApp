@@ -1,9 +1,8 @@
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+pluginManagement {
     repositories {
         google()
+        gradlePluginPortal()
         mavenCentral()
-        jcenter() // Warning: this repository is going to shut down soon
     }
 }
 rootProject.name = "Todo App"

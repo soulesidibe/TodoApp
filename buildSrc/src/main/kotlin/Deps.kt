@@ -37,4 +37,7 @@ object Deps {
     const val mockito = "org.mockito:mockito-core:3.9.0"
     const val mockk = "io.mockk:mockk:1.12.0"
     const val koin_test = "io.insert-koin:koin-test:${Versions.koin}"
+
+    val commonTest = "org.jetbrains.kotlin:kotlin-test-common:${Versions.kotlin}"
+    val commonAnnotations = "org.jetbrains.kotlin:kotlin-test-annotations-common:${Versions.kotlin}"
 }

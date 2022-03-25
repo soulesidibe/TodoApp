@@ -1,20 +1,15 @@
 plugins {
-    id("com.android.library")
+    id("java-library")
     kotlin("multiplatform")
 }
 
-android {
-    compileSdk = Versions.compileSdk
-    buildToolsVersion = "30.0.3"
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.compileSdk
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 kotlin {
-    android()
+    jvm()
     ios {
         binaries.framework {
             baseName = "shared"

@@ -25,15 +25,17 @@ kotlin {
             }
         }
 
-//        val commonTest by getting {
-//            dependencies {
+        val commonTest by getting {
+            dependencies {
+                implementation(Deps.commonTest)
+                implementation(Deps.commonAnnotations)
 //                implementation(Deps.junit)
 //                implementation(Deps.coroutines_test)
 //                implementation(Deps.hamcrest)
 //                implementation(Deps.mockito)
 //                implementation(Deps.mockk)
 //                implementation(Deps.koin_test)
-//            }
-//        }
+            }
+        }
     }
 }

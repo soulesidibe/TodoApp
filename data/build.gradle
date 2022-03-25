@@ -13,7 +13,7 @@ java {
 }
 
 dependencies {
-    implementation project(":domain")
+    implementation project(":shared")
     implementation(Deps.kotlin)
     implementation(Deps.coroutines_android)
     implementation(Deps.koin_core)

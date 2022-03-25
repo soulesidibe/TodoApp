@@ -1,6 +1,7 @@
 object Deps {
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     const val coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
+    const val coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
     const val koin_core = "io.insert-koin:koin-core:${Versions.koin}"
     const val koin_android = "io.insert-koin:koin-android:${Versions.koin}"
     const val material = "com.google.android.material:material:1.4.0"

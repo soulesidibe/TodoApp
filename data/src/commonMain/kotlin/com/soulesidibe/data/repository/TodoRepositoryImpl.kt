@@ -12,7 +12,6 @@ import com.soulesidibe.domain.exception.NoTodosFoundException
 import com.soulesidibe.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.sql.SQLException
 
 internal class TodoRepositoryImpl(
     private val dataSource: TodoLocalDataSource
@@ -37,7 +36,7 @@ internal class TodoRepositoryImpl(
     override suspend fun addOrUpdate(todoEntity: TodoEntity): Boolean {
         try {
             return dataSource.insert(todoEntity.toDb())
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             throw CannotAddOrUpdateException
         }
 
@@ -47,7 +46,7 @@ internal class TodoRepositoryImpl(
         try {
             dataSource.remove(todoEntity.toDb())
             return true
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             throw CannotRemoveTodoException
         }
     }

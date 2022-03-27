@@ -4,6 +4,8 @@ object Deps {
     const val coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
     const val koin_core = "io.insert-koin:koin-core:${Versions.koin}"
     const val koin_android = "io.insert-koin:koin-android:${Versions.koin}"
+    const val koin_iosarm64 = "io.insert-koin:koin-core-iosarm64:${Versions.koin}"
+    const val koin_iosx64 = "io.insert-koin:koin-core-iosx64:${Versions.koin}"
     const val material = "com.google.android.material:material:1.4.0"
     const val accompanist_system_ui_controller =
         "com.google.accompanist:accompanist-systemuicontroller:0.16.1"
@@ -40,4 +42,9 @@ object Deps {
 
     val commonTest = "org.jetbrains.kotlin:kotlin-test-common:${Versions.kotlin}"
     val commonAnnotations = "org.jetbrains.kotlin:kotlin-test-annotations-common:${Versions.kotlin}"
+
+    val sqldelight_android = "com.squareup.sqldelight:android-driver:${Versions.sqldeligth}"
+    val sqldelight_native = "com.squareup.sqldelight:native-driver:${Versions.sqldeligth}"
+    val sqldelight_coroutines =
+        "com.squareup.sqldelight:coroutines-extensions:${Versions.sqldeligth}"
 }

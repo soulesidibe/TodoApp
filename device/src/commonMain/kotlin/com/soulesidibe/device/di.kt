@@ -1,19 +1,14 @@
 package com.soulesidibe.device
 
-import androidx.room.Room
 import com.soulesidibe.data.datasource.TodoLocalDataSource
 import com.soulesidibe.device.datasource.TodoLocalDataSourceImpl
-import com.soulesidibe.device.db.TodoDatabase
-import org.koin.android.ext.koin.androidContext
+import com.soulesidibe.device.datasource.createDatabase
 import org.koin.dsl.module
 
-
 val deviceModule = module {
-
     single {
-        Room.databaseBuilder(androidContext(), TodoDatabase::class.java, "todos_db")
-            .build()
+        createDatabase(get())
     }
-    single { get<TodoDatabase>().getTodoDao() }
+    single { get<Database>().todoQueries }
     single<TodoLocalDataSource> { TodoLocalDataSourceImpl(get()) }
 }

@@ -1,0 +1,22 @@
+CREATE TABLE todos (
+    id TEXT NOT NULL,
+    title TEXT NOT NULL
+);
+
+
+getAll:
+SELECT *
+FROM todos ORDER BY id;
+
+getById:
+SELECT *
+FROM todos
+WHERE id=:todoId ORDER BY id ;
+
+insert:
+INSERT OR REPLACE INTO todos(id, title)
+VALUES (?,?);
+
+delete:
+DELETE FROM todos
+WHERE id = :idTodo;

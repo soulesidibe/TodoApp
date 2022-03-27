@@ -16,7 +16,7 @@ kotlin {
     jvm()
     ios {
         binaries.framework {
-            baseName = "data"
+            baseName = "Shared-Data"
         }
     }
 

@@ -2,6 +2,7 @@ package com.soulesidibe.todoapp
 
 import android.app.Application
 import com.soulesidibe.data.dataModule
+import com.soulesidibe.device.datasource.dbModule
 import com.soulesidibe.device.deviceModule
 import com.soulesidibe.domain.domainModule
 import org.koin.android.ext.koin.androidContext
@@ -16,7 +17,7 @@ class TodoApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@TodoApp)
-            modules(appModule, dataModule, domainModule, deviceModule)
+            modules(appModule, dataModule, domainModule, deviceModule, dbModule)
         }
     }
 }

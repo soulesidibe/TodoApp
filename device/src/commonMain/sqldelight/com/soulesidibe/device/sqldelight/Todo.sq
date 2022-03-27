@@ -17,6 +17,11 @@ insert:
 INSERT OR REPLACE INTO todos(id, title)
 VALUES (?,?);
 
+update:
+UPDATE OR IGNORE todos
+SET title = :title
+WHERE id = :id;
+
 delete:
 DELETE FROM todos
 WHERE id = :idTodo;

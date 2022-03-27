@@ -11,5 +11,7 @@ interface TodoLocalDataSource {
 
     suspend fun insert(todo: TodoData): Boolean
 
+    suspend fun update(todo: TodoData): Boolean
+
     suspend fun remove(todo: TodoData)
 }

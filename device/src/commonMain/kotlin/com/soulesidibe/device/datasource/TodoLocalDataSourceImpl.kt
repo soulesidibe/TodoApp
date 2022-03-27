@@ -31,6 +31,14 @@ internal class TodoLocalDataSourceImpl(
         }
     }
 
+    override suspend fun update(todo: TodoData): Boolean {
+        return withContext(Dispatchers.Default) {
+            dao.update(todo.title, todo.id)
+            true
+        }
+
+    }
+
     override suspend fun remove(todo: TodoData) {
         withContext(Dispatchers.Default) {
             dao.delete(todo.id)

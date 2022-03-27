@@ -2,7 +2,7 @@ package com.soulesidibe.data.repository
 
 import com.soulesidibe.data.datasource.TodoLocalDataSource
 import com.soulesidibe.data.model.TodoData
-import com.soulesidibe.data.model.mapper.toDb
+import com.soulesidibe.data.model.mapper.toData
 import com.soulesidibe.data.model.mapper.toEntity
 import com.soulesidibe.domain.Response
 import com.soulesidibe.domain.entity.TodoEntity
@@ -35,7 +35,12 @@ internal class TodoRepositoryImpl(
 
     override suspend fun addOrUpdate(todoEntity: TodoEntity): Boolean {
         try {
-            return dataSource.insert(todoEntity.toDb())
+            val by = dataSource.getBy(todoEntity.id)
+            if (by == null) {
+                return dataSource.insert(todoEntity.toData())
+            } else {
+                return dataSource.update(todoEntity.toData())
+            }
         } catch (e: Exception) {
             throw CannotAddOrUpdateException
         }
@@ -44,7 +49,7 @@ internal class TodoRepositoryImpl(
 
     override suspend fun remove(todoEntity: TodoEntity): Boolean {
         try {
-            dataSource.remove(todoEntity.toDb())
+            dataSource.remove(todoEntity.toData())
             return true
         } catch (e: Exception) {
             throw CannotRemoveTodoException

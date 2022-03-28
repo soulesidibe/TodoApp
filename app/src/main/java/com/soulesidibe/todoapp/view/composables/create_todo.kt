@@ -10,11 +10,14 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.soulesidibe.todoapp.R
 import com.soulesidibe.todoapp.model.TodoViewModel
@@ -148,7 +151,8 @@ private fun CreateTodo(
             onClick,
             modifier = Modifier.align(Alignment.End),
             todoState,
-            addOrUpdateState
+            addOrUpdateState,
+            textFieldValue.isNotEmpty()
         )
     }
 }
@@ -199,7 +203,8 @@ private fun CreateTodoSubmitButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     todoState: ViewState<TodoViewModel>,
-    addOrUpdateState: ViewState<Boolean>?
+    addOrUpdateState: ViewState<Boolean>?,
+    enableButton: Boolean
 ) {
     var loadingState by remember { mutableStateOf(false) }
 
@@ -208,12 +213,21 @@ private fun CreateTodoSubmitButton(
         else -> false
     }
 
-    Button(modifier = modifier, onClick = onClick, enabled = !loadingState) {
-        val label = if (todoState is ViewState.Success) {
-            stringResource(R.string.btn_edit_todo)
-        } else {
-            stringResource(R.string.btn_add_todo)
+    if (loadingState) {
+        Text(
+            text = "Enregistrement en cours...",
+            modifier = modifier,
+            style = TextStyle(color = Color.Gray, fontSize = 12.sp)
+        )
+    } else {
+        Button(modifier = modifier, onClick = onClick, enabled = enableButton) {
+            val label = if (todoState is ViewState.Success) {
+                stringResource(R.string.btn_edit_todo)
+            } else {
+                stringResource(R.string.btn_add_todo)
+            }
+            Text(text = label, textAlign = TextAlign.Center)
         }
-        Text(text = label, textAlign = TextAlign.Center)
     }
+
 }

@@ -39,17 +39,3 @@ kotlin {
     }
 
 }
-
-//dependencies {
-//    implementation(project(":shared"))
-//    implementation(Deps.kotlin)
-//    implementation(Deps.coroutines_android)
-//    implementation(Deps.koin_core)
-//
-//    testImplementation(Deps.junit)
-//    testImplementation(Deps.coroutines_test)
-//    testImplementation(Deps.hamcrest)
-//    testImplementation(Deps.mockito)
-//    testImplementation(Deps.mockk)
-//    testImplementation(Deps.koin_test)
-//}

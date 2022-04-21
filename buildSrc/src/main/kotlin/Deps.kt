@@ -1,6 +1,5 @@
 object Deps {
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
-    const val coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
     const val coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
     const val koin_core = "io.insert-koin:koin-core:${Versions.koin}"
     const val koin_android = "io.insert-koin:koin-android:${Versions.koin}"
@@ -12,9 +11,6 @@ object Deps {
 
     const val androidx_core_ktx = "androidx.core:core-ktx:1.6.0"
     const val androidx_app_compat = "androidx.appcompat:appcompat:1.3.1"
-    const val androidx_room_runtime = "androidx.room:room-runtime:${Versions.room}"
-    const val androidx_room_ktx = "androidx.room:room-ktx:${Versions.room}"
-    const val androidx_room_compiler = "androidx.room:room-compiler:${Versions.room}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03"
 
     const val androidx_compose_constraint_layout =
